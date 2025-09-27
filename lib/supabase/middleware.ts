@@ -1,6 +1,13 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
+const PUBLIC_ROUTE_REGEXES = [
+  /^\/?$/, // トップページ
+  /^\/events\/[^/]+\/?$/, // イベント詳細
+]
+
+const isPublicRoute = (pathname: string) => PUBLIC_ROUTE_REGEXES.some((regex) => regex.test(pathname))
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -37,12 +44,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const pathname = request.nextUrl.pathname
+
   if (
-    request.nextUrl.pathname !== "/" &&
     !user &&
-    !request.nextUrl.pathname.startsWith("/signin") &&
-    !request.nextUrl.pathname.startsWith("/signup") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !isPublicRoute(pathname) &&
+    !pathname.startsWith("/signin") &&
+    !pathname.startsWith("/signup") &&
+    !pathname.startsWith("/auth")
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()

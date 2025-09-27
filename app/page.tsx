@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Header } from "@/components/header"
 import { EventsPageClient } from "@/components/events-page-client"
@@ -20,10 +19,13 @@ export interface Event {
 
 export default async function EventsPage() {
   const supabase = await createClient()
-  const { data, error } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
 
-  if (error || !data?.user) {
-    redirect("/signin")
+  if (authError) {
+    console.error(authError)
   }
 
   const { data: eventRows, error: eventsError } = await supabase
@@ -42,7 +44,7 @@ export default async function EventsPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <EventsPageClient initialEvents={events} />
+      <EventsPageClient initialEvents={events} canManageEvents={Boolean(user)} />
     </div>
   )
 }

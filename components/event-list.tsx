@@ -11,12 +11,13 @@ import { useRouter } from "next/navigation"
 
 interface EventListProps {
   events: Event[]
-  onEdit: (event: Event) => void
-  onDelete: (id: string) => void
+  onEdit?: (event: Event) => void
+  onDelete?: (id: string) => void
   isProcessing?: boolean
+  canManageEvents?: boolean
 }
 
-export function EventList({ events, onEdit, onDelete, isProcessing = false }: EventListProps) {
+export function EventList({ events, onEdit, onDelete, isProcessing = false, canManageEvents = false }: EventListProps) {
   const router = useRouter()
 
   const handleShare = (event: Event) => {
@@ -34,7 +35,9 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false }: Ev
       <div className="flex flex-col items-center gap-3 rounded-[16px] border border-dashed border-border/80 bg-white/70 px-10 py-12 text-center">
         <div className="text-lg font-medium text-foreground">まだイベントがありません</div>
         <p className="text-sm text-muted-foreground">
-          「新しいイベント」ボタンから最初のイベントを作成して、コミュニティを広げましょう。
+          {canManageEvents
+            ? "「新しいイベント」ボタンから最初のイベントを作成して、コミュニティを広げましょう。"
+            : "公開されているイベントが追加されると、ここに表示されます。"}
         </p>
       </div>
     )
@@ -74,24 +77,28 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false }: Ev
                 >
                   <Share2 className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onEdit(event)}
-                  className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground"
-                  disabled={isProcessing}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onDelete(event.id)}
-                  className="h-9 w-9 rounded-full text-muted-foreground hover:text-destructive"
-                  disabled={isProcessing}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                {canManageEvents && onEdit && onDelete && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEdit(event)}
+                      className="h-9 w-9 rounded-full text-muted-foreground hover:text-foreground"
+                      disabled={isProcessing}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onDelete(event.id)}
+                      className="h-9 w-9 rounded-full text-muted-foreground hover:text-destructive"
+                      disabled={isProcessing}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </CardHeader>

@@ -43,6 +43,7 @@ interface EventDetailClientProps {
   eventId: string
   participants: EventParticipant[]
   hasAppliedToEvent: boolean
+  isAuthenticated: boolean
   aiSummarySection?: ReactNode
 }
 
@@ -51,6 +52,7 @@ export function EventDetailClient({
   eventId,
   participants,
   hasAppliedToEvent,
+  isAuthenticated,
   aiSummarySection,
 }: EventDetailClientProps) {
   const router = useRouter()
@@ -64,10 +66,18 @@ export function EventDetailClient({
   }
 
   const handleEdit = () => {
+    if (!isAuthenticated) {
+      router.push("/signin")
+      return
+    }
     router.push(`/?edit=${eventId}`)
   }
 
   const handleRegister = () => {
+    if (!isAuthenticated) {
+      router.push("/signin")
+      return
+    }
     router.push(`/events/${eventId}/register`)
   }
 
@@ -187,11 +197,17 @@ export function EventDetailClient({
                 <div className="space-y-1">
                   <h3 className="text-base font-semibold text-foreground">共通イベント参加者</h3>
                   <p className="text-xs text-muted-foreground">
-                    あなたと共通の参加履歴があるユーザー: {participantCount} 名
+                    {isAuthenticated
+                      ? `あなたと共通の参加履歴があるユーザー: ${participantCount} 名`
+                      : "ログインすると共通の参加履歴を閲覧できます。"}
                   </p>
                 </div>
 
-                {participantCount === 0 ? (
+                {!isAuthenticated ? (
+                  <p className="text-sm text-muted-foreground">
+                    ログインすると、共通の参加履歴があるユーザーの詳細が表示されます。
+                  </p>
+                ) : participantCount === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     {hasAppliedToEvent
                       ? "あなたと共通の参加履歴があるユーザーはまだ見つかりません。"
@@ -237,8 +253,13 @@ export function EventDetailClient({
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <Button size="lg" className="flex-1 min-w-[200px]" onClick={handleRegister} disabled={hasAppliedToEvent}>
-                  {hasAppliedToEvent ? "申し込み済み" : "参加申し込み"}
+                <Button
+                  size="lg"
+                  className="flex-1 min-w-[200px]"
+                  onClick={handleRegister}
+                  disabled={isAuthenticated && hasAppliedToEvent}
+                >
+                  {isAuthenticated ? (hasAppliedToEvent ? "申し込み済み" : "参加申し込み") : "ログインして申し込む"}
                 </Button>
                 <Button
                   variant="outline"

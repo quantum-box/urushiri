@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-react"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
 import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
@@ -34,6 +34,7 @@ const DISCOVERY_LABELS: Record<DiscoverySource, string> = {
   friend: "友人・知人の紹介",
   media: "メディア記事・ブログ",
   eventSite: "イベント紹介サイト",
+  other: "その他",
 }
 
 interface EventDetailClientProps {
@@ -132,7 +133,7 @@ export function EventDetailClient({ event, eventId, participants, hasAppliedToEv
                       <Clock className="h-5 w-5 text-primary" />
                       <div>
                         <div className="font-medium">
-                          {format(new Date(event.date), "yyyy年M月d日（E）", { locale: ja })}
+                          {format(parseISO(event.date), "yyyy年M月d日（E）", { locale: ja })}
                         </div>
                         <div className="text-sm text-muted-foreground">{event.time}開始</div>
                       </div>
@@ -230,8 +231,8 @@ export function EventDetailClient({ event, eventId, participants, hasAppliedToEv
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button size="lg" className="flex-1" onClick={handleRegister}>
-                  参加申し込み
+                <Button size="lg" className="flex-1" onClick={handleRegister} disabled={hasAppliedToEvent}>
+                  {hasAppliedToEvent ? "申し込み済み" : "参加申し込み"}
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleShare}>
                   <Share2 className="h-4 w-4 mr-2" />

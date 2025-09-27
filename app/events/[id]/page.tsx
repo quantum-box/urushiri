@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { notFound, redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Header } from "@/components/header"
@@ -5,6 +6,8 @@ import { EventDetailClient } from "@/components/event-detail-client"
 import { EVENT_SELECT_COLUMNS, mapEventRowToEvent, type EventRow } from "@/lib/supabase/events"
 import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
 import type { Event } from "@/app/page"
+import { AiSummaryContent, type EventRegistrationInsight } from "./ai-summary-content"
+import { AiSummarySkeleton } from "@/components/ai-summary-skeleton"
 
 interface EventDetailPageProps {
   params: { id: string }
@@ -23,6 +26,7 @@ type EventRegistrationRow = {
   event_id: string
   user_id: string
 }
+
 
 export default async function EventDetailPage({ params }: EventDetailPageProps) {
   const supabase = await createClient()
@@ -161,6 +165,11 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   }, [])
 
   const hasAppliedToEvent = currentUserEventIdSet.has(params.id)
+  const insightRegistrations: EventRegistrationInsight[] = participantRows.map((registration) => ({
+    age_group: registration.age_group,
+    occupation: registration.occupation,
+    other: registration.other,
+  }))
 
   return (
     <div className="min-h-screen bg-background">
@@ -170,6 +179,12 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         eventId={params.id}
         participants={participants}
         hasAppliedToEvent={hasAppliedToEvent}
+        aiSummarySection={
+          <Suspense fallback={<AiSummarySkeleton />}>
+            {/* @ts-expect-error Async Server Component */}
+            <AiSummaryContent event={event} registrations={insightRegistrations} />
+          </Suspense>
+        }
       />
     </div>
   )

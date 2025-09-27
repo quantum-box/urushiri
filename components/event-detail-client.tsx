@@ -1,5 +1,6 @@
 "use client"
 
+import type { ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -42,9 +43,16 @@ interface EventDetailClientProps {
   eventId: string
   participants: EventParticipant[]
   hasAppliedToEvent: boolean
+  aiSummarySection?: ReactNode
 }
 
-export function EventDetailClient({ event, eventId, participants, hasAppliedToEvent }: EventDetailClientProps) {
+export function EventDetailClient({
+  event,
+  eventId,
+  participants,
+  hasAppliedToEvent,
+  aiSummarySection,
+}: EventDetailClientProps) {
   const router = useRouter()
 
   const handleShare = () => {
@@ -177,6 +185,8 @@ export function EventDetailClient({ event, eventId, participants, hasAppliedToEv
                   </div>
                 </div>
               </div>
+
+              {aiSummarySection}
 
               <div className="space-y-6 border-t border-border pt-6">
                 <div className="space-y-4">

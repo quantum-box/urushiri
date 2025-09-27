@@ -70,6 +70,10 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
     router.push(`/?edit=${params.id}`)
   }
 
+  const handleRegister = () => {
+    router.push(`/events/${params.id}/register`)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -212,7 +216,7 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button size="lg" className="flex-1">
+                <Button size="lg" className="flex-1" onClick={handleRegister}>
                   参加申し込み
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleShare}>

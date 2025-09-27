@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-react"
+import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar, CheckCircle2 } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
@@ -49,12 +49,14 @@ interface EventDetailPageProps {
 export default function EventDetailPage({ params }: EventDetailPageProps) {
   const router = useRouter()
   const [event, setEvent] = useState<Event | null>(null)
+  const [hasAttended, setHasAttended] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // 実際のアプリでは、APIからイベントデータを取得
     const foundEvent = mockEvents.find((e) => e.id === params.id)
     setEvent(foundEvent || null)
+    setHasAttended(false)
     setLoading(false)
   }, [params.id])
 
@@ -68,6 +70,39 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
 
   const handleEdit = () => {
     router.push(`/?edit=${params.id}`)
+  }
+
+  const handleMarkAttended = () => {
+    if (hasAttended || !event) {
+      return
+    }
+
+    if (event.currentAttendees >= event.maxAttendees) {
+      return
+    }
+
+    let didAttend = false
+
+    setEvent((prevEvent) => {
+      if (!prevEvent) {
+        return prevEvent
+      }
+
+      if (prevEvent.currentAttendees >= prevEvent.maxAttendees) {
+        return prevEvent
+      }
+
+      didAttend = true
+
+      return {
+        ...prevEvent,
+        currentAttendees: Math.min(prevEvent.currentAttendees + 1, prevEvent.maxAttendees),
+      }
+    })
+
+    if (didAttend) {
+      setHasAttended(true)
+    }
   }
 
   if (loading) {
@@ -96,6 +131,7 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
   }
 
   const attendancePercentage = Math.min((event.currentAttendees / event.maxAttendees) * 100, 100)
+  const isEventFull = event.currentAttendees >= event.maxAttendees
 
   return (
     <div className="min-h-screen bg-background">
@@ -211,11 +247,23 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <Button size="lg" className="flex-1">
-                  参加申し込み
-                </Button>
-                <Button variant="outline" size="lg" onClick={handleShare}>
+              <div className="flex flex-col gap-4 pt-4 sm:flex-row">
+                <div className="flex flex-col gap-3 sm:flex-1">
+                  <Button size="lg" className="w-full">
+                    参加申し込み
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant={hasAttended ? "secondary" : "default"}
+                    className="flex w-full items-center justify-center gap-2"
+                    onClick={handleMarkAttended}
+                    disabled={hasAttended || isEventFull}
+                  >
+                    <CheckCircle2 className="h-5 w-5" />
+                    {hasAttended ? "参加済み" : isEventFull ? "満席のため参加不可" : "参加した"}
+                  </Button>
+                </div>
+                <Button variant="outline" size="lg" onClick={handleShare} className="w-full sm:w-auto sm:self-center">
                   <Share2 className="h-4 w-4 mr-2" />
                   シェア
                 </Button>

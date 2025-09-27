@@ -127,8 +127,6 @@ export function EventDetailClient({
             </CardHeader>
 
             <CardContent className="space-y-8">
-              {aiSummarySection}
-
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-3">イベント詳細</h3>
                 <p className="text-muted-foreground leading-relaxed">{event.description}</p>
@@ -187,6 +185,8 @@ export function EventDetailClient({
                   </div>
                 </div>
               </div>
+
+              {aiSummarySection}
 
               <div className="space-y-6 border-t border-border pt-6">
                 <div className="space-y-4">

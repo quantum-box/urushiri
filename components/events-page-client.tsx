@@ -4,7 +4,7 @@ import { useState } from "react"
 import { EventList } from "@/components/event-list"
 import { EventForm } from "@/components/event-form"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Calendar } from "lucide-react"
 import type { Event } from "@/app/page"
 
 interface EventsPageClientProps {
@@ -54,40 +54,37 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      <div className="flex items-center justify-between mb-12">
+    <div className="container mx-auto px-6 py-8">
+      <div className="flex items-center justify-between mb-10">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl">🤝</span>
+          <div className="bg-honey-yellow/20 p-3 rounded-3xl">
+            <Calendar className="h-10 w-10 text-amber-700" />
           </div>
           <div>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-800 to-yellow-700 bg-clip-text text-transparent mb-2">
-              つながりを見つけよう
-            </h2>
-            <p className="text-amber-600 text-lg font-medium">以前会った人との新しいつながりを発見しよう！</p>
+            <h2 className="text-4xl font-bold text-amber-800 mb-1">🎪 イベント一覧</h2>
+            <p className="text-amber-600 text-lg">みんなでゆるく楽しいイベントを共有しよう</p>
           </div>
         </div>
         <Button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          className="flex items-center gap-3 bg-honey-yellow hover:bg-honey-yellow/90 text-amber-800 font-bold px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all text-lg"
           size="lg"
         >
-          <Plus className="h-6 w-6" />
-          新しい集まりを作る
+          <Plus className="h-6 w-6" />✨ 新しいイベント
         </Button>
       </div>
 
-      <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-yellow-200 p-8">
-        {showForm ? (
+      {showForm ? (
+        <div className="bg-white/80 backdrop-blur rounded-3xl p-8 shadow-lg border border-honey-yellow/20">
           <EventForm
             event={editingEvent}
             onSubmit={editingEvent ? handleUpdateEvent : handleCreateEvent}
             onCancel={handleCancelForm}
           />
-        ) : (
-          <EventList events={events} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
-        )}
-      </div>
+        </div>
+      ) : (
+        <EventList events={events} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
+      )}
     </div>
   )
 }

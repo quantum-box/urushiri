@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2 } from "lucide-react"
+import { Loader2, Calendar } from "lucide-react"
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("")
@@ -81,37 +81,35 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 flex items-center justify-center p-6">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-yellow-200/20 rounded-full blur-xl" />
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-orange-200/20 rounded-full blur-xl" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-amber-200/10 rounded-full blur-2xl" />
-      </div>
-
-      <Card className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-yellow-200 rounded-3xl relative z-10">
-        <CardHeader className="text-center pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-soft-cream via-honey-yellow/20 to-soft-cream flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[url('/placeholder.svg?key=7x9vt')] opacity-5"></div>
+      <Card className="w-full max-w-md bg-white/95 backdrop-blur border-2 border-honey-yellow/30 rounded-3xl shadow-2xl relative z-10">
+        <CardHeader className="text-center pb-6">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">🍯</span>
+            <div className="bg-honey-yellow/20 p-3 rounded-2xl">
+              <Calendar className="h-8 w-8 text-amber-700" />
             </div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-yellow-600 bg-clip-text text-transparent">
-              ゆるしり
-            </CardTitle>
+            <div className="text-left">
+              <CardTitle className="text-3xl font-bold text-amber-800">🧸 ゆるしり</CardTitle>
+              <p className="text-amber-600 text-sm">イベント共有ページ</p>
+            </div>
           </div>
-          <CardDescription className="text-amber-600 text-lg font-medium">
-            新しいアカウントを作成してください
+          <CardDescription className="text-amber-700 text-base">
+            新しいアカウントを作成して
+            <br />
+            楽しいイベントライフを始めよう
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6 px-8">
+          <CardContent className="space-y-5 px-8">
             {error && (
-              <Alert variant="destructive" className="border-red-200 bg-red-50">
+              <Alert variant="destructive" className="bg-red-50 border-red-200 rounded-2xl">
                 <AlertDescription className="text-red-700">{error}</AlertDescription>
               </Alert>
             )}
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-amber-700 font-semibold">
-                メールアドレス
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-amber-800 font-semibold">
+                📧 メールアドレス
               </Label>
               <Input
                 id="email"
@@ -120,12 +118,12 @@ export default function SignUpPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                className="border-yellow-200 focus:border-yellow-400 focus:ring-yellow-400 rounded-xl h-12"
+                className="bg-white border-honey-yellow/30 focus:border-honey-yellow rounded-2xl py-3 text-amber-800"
               />
             </div>
-            <div className="space-y-3">
-              <Label htmlFor="password" className="text-amber-700 font-semibold">
-                パスワード
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-amber-800 font-semibold">
+                🔐 パスワード
               </Label>
               <Input
                 id="password"
@@ -134,12 +132,12 @@ export default function SignUpPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="border-yellow-200 focus:border-yellow-400 focus:ring-yellow-400 rounded-xl h-12"
+                className="bg-white border-honey-yellow/30 focus:border-honey-yellow rounded-2xl py-3 text-amber-800"
               />
             </div>
-            <div className="space-y-3">
-              <Label htmlFor="confirmPassword" className="text-amber-700 font-semibold">
-                パスワード確認
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-amber-800 font-semibold">
+                🔒 パスワード確認
               </Label>
               <Input
                 id="confirmPassword"
@@ -148,32 +146,28 @@ export default function SignUpPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
-                className="border-yellow-200 focus:border-yellow-400 focus:ring-yellow-400 rounded-xl h-12"
+                className="bg-white border-honey-yellow/30 focus:border-honey-yellow rounded-2xl py-3 text-amber-800"
               />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-6 px-8 pb-8">
+          <CardFooter className="flex flex-col space-y-4 px-8 pb-8">
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+              className="w-full bg-honey-yellow hover:bg-honey-yellow/90 text-amber-800 font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all text-lg"
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  アカウント作成中...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />🍯 アカウント作成中...
                 </>
               ) : (
-                "アカウント作成"
+                "✨ アカウント作成"
               )}
             </Button>
-            <p className="text-amber-600 text-center font-medium">
+            <p className="text-sm text-amber-700 text-center bg-honey-yellow/10 p-3 rounded-2xl">
               すでにアカウントをお持ちの方は{" "}
-              <Link
-                href="/signin"
-                className="text-yellow-600 hover:text-yellow-700 font-semibold hover:underline transition-colors"
-              >
-                サインイン
+              <Link href="/signin" className="text-amber-800 hover:underline font-semibold">
+                🚀 サインイン
               </Link>
             </p>
           </CardFooter>

@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated to refined ゆるしり color palette */
-  /* メインカラーパレット */
+  /* ゆるしりカラーパレット - プーさん風テーマに変更 */
+  /* ハニーイエロー系 */
   --honey-yellow: #fbbf24;
   --soft-cream: #fef3c7;
   --pooh-brown: #b45309;
@@ -16,76 +16,76 @@
   --soft-blue: #bfdbfe;
   --soft-green: #bbf7d0;
 
-  /* システムカラーを新しいパレットに合わせて調整 */
-  --background: #fef3c7; /* soft-cream */
-  --foreground: #b45309; /* pooh-brown */
-  --card: #ffffff; /* pure-white */
-  --card-foreground: #b45309;
+  /* メインカラーパレット適用 */
+  --background: #fef3c7; /* ソフトクリーム背景 */
+  --foreground: #b45309; /* プーブラウンテキスト */
+  --card: #ffffff; /* ピュアホワイトカード */
+  --card-foreground: #b45309; /* プーブラウンカードテキスト */
   --popover: #ffffff;
   --popover-foreground: #b45309;
-  --primary: #fbbf24; /* honey-yellow */
-  --primary-foreground: #b45309;
-  --secondary: #fef3c7; /* soft-cream */
+  --primary: #fbbf24; /* ハニーイエロープライマリ */
+  --primary-foreground: #b45309; /* プーブラウンプライマリテキスト */
+  --secondary: #fef3c7; /* ソフトクリームセカンダリ */
   --secondary-foreground: #b45309;
-  --muted: #fef3c7;
-  --muted-foreground: #b45309;
-  --accent: #fecaca; /* soft-pink */
+  --muted: #fef9e7; /* より薄いクリーム */
+  --muted-foreground: #92400e; /* 少し薄いブラウン */
+  --accent: #fbbf24; /* ハニーイエローアクセント */
   --accent-foreground: #b45309;
-  --destructive: #f87171;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #fbbf24;
+  --border: #f3e8a6; /* 薄いイエローボーダー */
   --input: #ffffff;
   --ring: #fbbf24;
   --chart-1: #fbbf24;
   --chart-2: #fecaca;
   --chart-3: #bbf7d0;
   --chart-4: #bfdbfe;
-  --chart-5: #fef3c7;
-  --radius: 1.5rem; /* より丸みを帯びた親しみやすいデザイン */
+  --chart-5: #ddd6fe;
+  --radius: 1rem; /* より丸みを帯びた角 */
   --sidebar: #fef3c7;
   --sidebar-foreground: #b45309;
   --sidebar-primary: #fbbf24;
   --sidebar-primary-foreground: #b45309;
   --sidebar-accent: #ffffff;
   --sidebar-accent-foreground: #b45309;
-  --sidebar-border: #fbbf24;
+  --sidebar-border: #f3e8a6;
   --sidebar-ring: #fbbf24;
 }
 
 .dark {
-  /* Updated dark theme to maintain warmth */
-  --background: #1c1917;
-  --foreground: #fef3c7;
-  --card: #292524;
+  /* ダークテーマは温かみのある色調に調整 */
+  --background: #1c1917; /* 温かみのあるダークブラウン */
+  --foreground: #fef3c7; /* ソフトクリーム */
+  --card: #292524; /* 温かみのあるダークカード */
   --card-foreground: #fef3c7;
   --popover: #292524;
   --popover-foreground: #fef3c7;
-  --primary: #fbbf24;
+  --primary: #fbbf24; /* ハニーイエロー維持 */
   --primary-foreground: #1c1917;
-  --secondary: #44403c;
+  --secondary: #44403c; /* 温かみのあるグレー */
   --secondary-foreground: #fef3c7;
-  --muted: #3c3530;
-  --muted-foreground: #b45309;
-  --accent: #fecaca;
+  --muted: #44403c;
+  --muted-foreground: #a8a29e;
+  --accent: #fbbf24;
   --accent-foreground: #1c1917;
-  --destructive: #f87171;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #44403c;
-  --input: #292524;
+  --border: #57534e;
+  --input: #44403c;
   --ring: #fbbf24;
   --chart-1: #fbbf24;
   --chart-2: #fecaca;
   --chart-3: #bbf7d0;
   --chart-4: #bfdbfe;
-  --chart-5: #fef3c7;
-  --radius: 1.5rem;
+  --chart-5: #ddd6fe;
+  --radius: 1rem;
   --sidebar: #1c1917;
   --sidebar-foreground: #fef3c7;
   --sidebar-primary: #fbbf24;
   --sidebar-primary-foreground: #1c1917;
   --sidebar-accent: #44403c;
   --sidebar-accent-foreground: #fef3c7;
-  --sidebar-border: #44403c;
+  --sidebar-border: #57534e;
   --sidebar-ring: #fbbf24;
 }
 
@@ -136,34 +136,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Updated background to use soft-cream gradient */
-    background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
-    min-height: 100vh;
   }
-}
-
-/* Updated custom classes for refined palette */
-.honey-gradient {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-}
-
-.soft-gradient {
-  background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
-}
-
-.warm-gradient {
-  background: linear-gradient(135deg, #fef3c7 0%, #fecaca 50%, #bfdbfe 100%);
-}
-
-.pooh-shadow {
-  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.15);
-}
-
-.pooh-hover {
-  transition: all 0.2s ease;
-}
-
-.pooh-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(251, 191, 36, 0.25);
 }

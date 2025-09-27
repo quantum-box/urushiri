@@ -55,10 +55,10 @@ export default async function EventsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-white to-pink-100">
       <Header />
       <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-yellow-100/30 to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-yellow-100/20 to-transparent pointer-events-none" />
         <EventsPageClient initialEvents={initialEvents} />
       </div>
     </div>

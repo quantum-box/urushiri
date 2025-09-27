@@ -4,62 +4,56 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* プーさん風カラーパレットに変更 */
-  /* プライマリカラー */
+  /* Updated to refined ゆるしり color palette */
+  /* メインカラーパレット */
   --honey-yellow: #fbbf24;
+  --soft-cream: #fef3c7;
   --pooh-brown: #b45309;
-  --soft-peach: #fed7aa;
-  --cream-white: #fffbeb;
+  --pure-white: #ffffff;
 
-  /* アクセントカラー */
-  --piglet-pink: #f9a8d4;
-  --eeyore-blue: #93c5fd;
-  --tigger-orange: #fb923c;
-  --forest-green: #4ade80;
+  /* セカンダリカラー */
+  --soft-pink: #fecaca;
+  --soft-blue: #bfdbfe;
+  --soft-green: #bbf7d0;
 
-  /* テキストカラー */
-  --text-primary: #92400e;
-  --text-secondary: #b45309;
-  --text-tertiary: #d97706;
-
-  /* システムカラーをプーさんテーマに合わせて調整 */
-  --background: #fffbeb; /* cream-white */
-  --foreground: #92400e; /* text-primary */
-  --card: #ffffff;
-  --card-foreground: #92400e;
+  /* システムカラーを新しいパレットに合わせて調整 */
+  --background: #fef3c7; /* soft-cream */
+  --foreground: #b45309; /* pooh-brown */
+  --card: #ffffff; /* pure-white */
+  --card-foreground: #b45309;
   --popover: #ffffff;
-  --popover-foreground: #92400e;
+  --popover-foreground: #b45309;
   --primary: #fbbf24; /* honey-yellow */
-  --primary-foreground: #ffffff;
-  --secondary: #fed7aa; /* soft-peach */
+  --primary-foreground: #b45309;
+  --secondary: #fef3c7; /* soft-cream */
   --secondary-foreground: #b45309;
   --muted: #fef3c7;
-  --muted-foreground: #d97706;
-  --accent: #f9a8d4; /* piglet-pink */
-  --accent-foreground: #92400e;
+  --muted-foreground: #b45309;
+  --accent: #fecaca; /* soft-pink */
+  --accent-foreground: #b45309;
   --destructive: #f87171;
   --destructive-foreground: #ffffff;
-  --border: #fde68a;
+  --border: #fbbf24;
   --input: #ffffff;
   --ring: #fbbf24;
   --chart-1: #fbbf24;
-  --chart-2: #f9a8d4;
-  --chart-3: #4ade80;
-  --chart-4: #fb923c;
-  --chart-5: #93c5fd;
-  --radius: 1rem; /* より丸みを帯びた親しみやすいデザイン */
-  --sidebar: #fffbeb;
-  --sidebar-foreground: #92400e;
+  --chart-2: #fecaca;
+  --chart-3: #bbf7d0;
+  --chart-4: #bfdbfe;
+  --chart-5: #fef3c7;
+  --radius: 1.5rem; /* より丸みを帯びた親しみやすいデザイン */
+  --sidebar: #fef3c7;
+  --sidebar-foreground: #b45309;
   --sidebar-primary: #fbbf24;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #fed7aa;
+  --sidebar-primary-foreground: #b45309;
+  --sidebar-accent: #ffffff;
   --sidebar-accent-foreground: #b45309;
-  --sidebar-border: #fde68a;
+  --sidebar-border: #fbbf24;
   --sidebar-ring: #fbbf24;
 }
 
 .dark {
-  /* ダークテーマも温かみのある色調に調整 */
+  /* Updated dark theme to maintain warmth */
   --background: #1c1917;
   --foreground: #fef3c7;
   --card: #292524;
@@ -69,10 +63,10 @@
   --primary: #fbbf24;
   --primary-foreground: #1c1917;
   --secondary: #44403c;
-  --secondary-foreground: #fed7aa;
+  --secondary-foreground: #fef3c7;
   --muted: #3c3530;
-  --muted-foreground: #d97706;
-  --accent: #f9a8d4;
+  --muted-foreground: #b45309;
+  --accent: #fecaca;
   --accent-foreground: #1c1917;
   --destructive: #f87171;
   --destructive-foreground: #ffffff;
@@ -80,17 +74,17 @@
   --input: #292524;
   --ring: #fbbf24;
   --chart-1: #fbbf24;
-  --chart-2: #f9a8d4;
-  --chart-3: #4ade80;
-  --chart-4: #fb923c;
-  --chart-5: #93c5fd;
-  --radius: 1rem;
+  --chart-2: #fecaca;
+  --chart-3: #bbf7d0;
+  --chart-4: #bfdbfe;
+  --chart-5: #fef3c7;
+  --radius: 1.5rem;
   --sidebar: #1c1917;
   --sidebar-foreground: #fef3c7;
   --sidebar-primary: #fbbf24;
   --sidebar-primary-foreground: #1c1917;
   --sidebar-accent: #44403c;
-  --sidebar-accent-foreground: #fed7aa;
+  --sidebar-accent-foreground: #fef3c7;
   --sidebar-border: #44403c;
   --sidebar-ring: #fbbf24;
 }
@@ -142,23 +136,23 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* プーさんテーマに合わせた背景グラデーション追加 */
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    /* Updated background to use soft-cream gradient */
+    background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
     min-height: 100vh;
   }
 }
 
-/* プーさんテーマ用のカスタムクラス追加 */
+/* Updated custom classes for refined palette */
 .honey-gradient {
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
 }
 
 .soft-gradient {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
 }
 
 .warm-gradient {
-  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #f9a8d4 100%);
+  background: linear-gradient(135deg, #fef3c7 0%, #fecaca 50%, #bfdbfe 100%);
 }
 
 .pooh-shadow {

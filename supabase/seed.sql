@@ -92,13 +92,13 @@ with registration_seed as (
     '2e15d4de-6f3f-4f63-8f78-4a6f274cd9a0'::uuid as id,
     '0d3f4a9f-7b5a-4a83-8b30-9d9b2a19a0b1'::uuid as event_id,
     u.id as user_id,
-    '高橋 花子'::text as name,
-    'twenties'::text as age_group,
-    'designer'::text as occupation,
-    'sns'::text as discovery,
-    null::text as other
+    '福山 貴也'::text as name,
+    'thirties'::text as age_group,
+    'manager'::text as occupation,
+    'media'::text as discovery,
+    '海外の登壇者情報をチェックしたいです。'::text as other
   from auth.users u
-  where u.email = 'hanako.takahashi@example.com'
+  where u.email = 'takanori.fukuyama@quantum-box.com'
 
   union all
 
@@ -106,13 +106,13 @@ with registration_seed as (
     '6f4e29fd-4802-4c3f-9e1a-2fd466a0e4cf'::uuid as id,
     '7ab2df7c-3d94-48dd-9e95-1f3d8f2fbc3d'::uuid as event_id,
     u.id as user_id,
-    '佐藤 誠'::text as name,
-    'thirties'::text as age_group,
-    'engineer'::text as occupation,
-    'friend'::text as discovery,
+    '川村 美織'::text as name,
+    'twenties'::text as age_group,
+    'designer'::text as occupation,
+    'sns'::text as discovery,
     null::text as other
   from auth.users u
-  where u.email = 'makoto.sato@example.com'
+  where u.email = 'miomio.pooh.1224@gmail.com'
 
   union all
 
@@ -120,13 +120,13 @@ with registration_seed as (
     '9bce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
     '9f6c1ae4-58cc-4f7f-986d-7fb4c9f7de12'::uuid as event_id,
     u.id as user_id,
-    '中村 美咲'::text as name,
+    '福山 貴也'::text as name,
     'forties'::text as age_group,
-    'manager'::text as occupation,
-    'media'::text as discovery,
-    'スタートアップ業界の最新動向に興味があります。'::text as other
+    'planner'::text as occupation,
+    'friend'::text as discovery,
+    '投資家として候補を探しています。'::text as other
   from auth.users u
-  where u.email = 'misaki.nakamura@example.com'
+  where u.email = 'takanori.fukuyama+1@quantum-box.com'
 )
 insert into public.event_registrations (
   id,

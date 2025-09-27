@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -47,7 +48,9 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Calendar className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-semibold">イベント管理システム</h1>
+          <Link href="/" className="text-xl font-semibold text-foreground">
+            イベント管理システム
+          </Link>
         </div>
 
         <DropdownMenu>

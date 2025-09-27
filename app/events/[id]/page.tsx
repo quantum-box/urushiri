@@ -1,192 +1,166 @@
-import { redirect } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Header } from "@/components/header"
 import { EventDetailClient } from "@/components/event-detail-client"
+import { EVENT_SELECT_COLUMNS, mapEventRowToEvent, type EventRow } from "@/lib/supabase/events"
 import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
 import type { Event } from "@/app/page"
-
-// モックデータ（実際のアプリでは、APIやデータベースから取得）
-export const mockEvents: Event[] = [
-  {
-    id: "1",
-    title: "テックカンファレンス 2025",
-    description:
-      "最新のテクノロジートレンドについて学ぶカンファレンス。AI、機械学習、Web開発の最新動向について業界のエキスパートが講演します。ネットワーキングの機会もあり、同じ志を持つ開発者との交流も期待できます。",
-    date: "2025-03-15",
-    time: "10:00",
-    location: "東京国際フォーラム",
-    category: "テクノロジー",
-    maxAttendees: 500,
-    currentAttendees: 234,
-    isPublic: true,
-    createdAt: "2025-01-15T10:00:00Z",
-  },
-  {
-    id: "2",
-    title: "デザインワークショップ",
-    description:
-      "UI/UXデザインの基礎を学ぶハンズオンワークショップ。Figmaを使った実践的なデザイン制作を通じて、ユーザー中心のデザイン思考を身につけます。",
-    date: "2025-02-28",
-    time: "14:00",
-    location: "渋谷クリエイティブセンター",
-    category: "デザイン",
-    maxAttendees: 30,
-    currentAttendees: 18,
-    isPublic: true,
-    createdAt: "2025-01-10T14:30:00Z",
-  },
-  {
-    id: "3",
-    title: "ハッカソン",
-    description:
-      "UI/UXデザインの基礎を学ぶハンズオンワークショップ。Figmaを使った実践的なデザイン制作を通じて、ユーザー中心のデザイン思考を身につけます。",
-    date: "2025-02-28",
-    time: "14:00",
-    location: "渋谷クリエイティブセンター",
-    category: "デザイン",
-    maxAttendees: 30,
-    currentAttendees: 18,
-    isPublic: true,
-    createdAt: "2025-01-10T14:30:00Z",
-  },
-]
-
-interface MockUser {
-  id: string
-  email: string
-  ageGroup: AgeGroup
-  occupation: OccupationCategory
-  discovery: DiscoverySource
-}
-
-interface MockEventAttendance {
-  userId: string
-  eventId: string
-}
-
-const mockUsers: MockUser[] = [
-  {
-    id: "p-1",
-    email: "hanako.takahashi@example.com",
-    ageGroup: "twenties",
-    occupation: "designer",
-    discovery: "sns",
-  },
-  {
-    id: "p-2",
-    email: "makoto.sato@example.com",
-    ageGroup: "thirties",
-    occupation: "engineer",
-    discovery: "friend",
-  },
-  {
-    id: "p-3",
-    email: "misaki.nakamura@example.com",
-    ageGroup: "forties",
-    occupation: "manager",
-    discovery: "media",
-  },
-  {
-    id: "p-4",
-    email: "ichiro.yamamoto@example.com",
-    ageGroup: "thirties",
-    occupation: "planner",
-    discovery: "search",
-  },
-  {
-    id: "p-5",
-    email: "hong.lee@example.com",
-    ageGroup: "twenties",
-    occupation: "student",
-    discovery: "eventSite",
-  },
-  {
-    id: "p-6",
-    email: "sho.tanaka@example.com",
-    ageGroup: "fifties",
-    occupation: "manager",
-    discovery: "media",
-  },
-]
-
-const mockEventAttendances: MockEventAttendance[] = [
-  { userId: "p-1", eventId: "1" },
-  { userId: "p-1", eventId: "3" },
-  { userId: "p-2", eventId: "1" },
-  { userId: "p-2", eventId: "2" },
-  { userId: "p-3", eventId: "1" },
-  { userId: "p-4", eventId: "2" },
-  { userId: "p-4", eventId: "3" },
-  { userId: "p-5", eventId: "2" },
-  { userId: "p-6", eventId: "3" },
-  { userId: "p-6", eventId: "2" },
-]
 
 interface EventDetailPageProps {
   params: { id: string }
 }
 
+type EventRegistrationDetailRow = {
+  id: string
+  user_id: string
+  age_group: AgeGroup | null
+  occupation: OccupationCategory | null
+  discovery: DiscoverySource | null
+  other: string | null
+}
+
+type EventRegistrationRow = {
+  event_id: string
+  user_id: string
+}
+
 export default async function EventDetailPage({ params }: EventDetailPageProps) {
   const supabase = await createClient()
-  const { data, error } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
 
-  if (error || !data?.user) {
+  if (authError || !user) {
     redirect("/signin")
   }
 
-  const event = mockEvents.find((e) => e.id === params.id) || null
+  const eventQuery = await supabase
+    .from("events")
+    .select(EVENT_SELECT_COLUMNS)
+    .eq("id", params.id)
+    .maybeSingle()
 
-  const supabaseEmail = data.user.email ?? null
-  const currentUser = supabaseEmail ? mockUsers.find((user) => user.email === supabaseEmail) : null
+  if (eventQuery.error) {
+    console.error(eventQuery.error)
+  }
 
-  const currentUserEventIds = currentUser
-    ? mockEventAttendances.filter((attendance) => attendance.userId === currentUser.id).map((attendance) => attendance.eventId)
-    : []
+  const eventRow = (eventQuery.data as EventRow | null) ?? null
+
+  if (!eventRow) {
+    notFound()
+  }
+
+  const event: Event = mapEventRowToEvent(eventRow)
+
+  const currentUserRegistrationQuery = await supabase
+    .from("event_registrations")
+    .select("event_id, user_id")
+    .eq("user_id", user.id)
+
+  const currentUserRegistrations = (currentUserRegistrationQuery.data as EventRegistrationRow[] | null) ?? []
+
+  const currentUserEventIds = currentUserRegistrations.map((registration) => registration.event_id)
   const currentUserEventIdSet = new Set(currentUserEventIds)
-  const hasAppliedToEvent = currentUser ? currentUserEventIdSet.has(params.id) : true
 
-  const eventParticipantUsers = new Map<string, MockUser>()
+  const currentEventRegistrationsQuery = await supabase
+    .from("event_registrations")
+    .select("id, user_id, age_group, occupation, discovery, other")
+    .eq("event_id", params.id)
 
-  mockEventAttendances
-    .filter((attendance) => attendance.eventId === params.id)
-    .forEach((attendance) => {
-      const user = mockUsers.find((item) => item.id === attendance.userId)
-      if (user) {
-        eventParticipantUsers.set(user.id, user)
+  if (currentEventRegistrationsQuery.error) {
+    console.error(currentEventRegistrationsQuery.error)
+  }
+
+  const participantRows = ((currentEventRegistrationsQuery.data as EventRegistrationDetailRow[] | null) ?? []).filter(
+    (registration) => registration.user_id !== user.id,
+  )
+  const participantUserIds = Array.from(new Set(participantRows.map((registration) => registration.user_id)))
+
+  let participantRegistrations: EventRegistrationRow[] = []
+  if (participantUserIds.length > 0) {
+    const participantRegistrationsQuery = await supabase
+      .from("event_registrations")
+      .select("event_id, user_id")
+      .in("user_id", participantUserIds)
+
+    if (participantRegistrationsQuery.error) {
+      console.error(participantRegistrationsQuery.error)
+    }
+
+    participantRegistrations = (participantRegistrationsQuery.data as EventRegistrationRow[] | null) ?? []
+  }
+
+  const eventIdsForTitleLookup = new Set<string>([
+    eventRow.id,
+    ...participantRegistrations.map((registration) => registration.event_id),
+    ...Array.from(currentUserEventIdSet),
+  ])
+
+  const eventTitleMap = new Map<string, string>()
+  eventTitleMap.set(eventRow.id, eventRow.title)
+
+  if (eventIdsForTitleLookup.size > 1) {
+    const idsToFetch = Array.from(eventIdsForTitleLookup).filter((eventId) => !eventTitleMap.has(eventId))
+
+    if (idsToFetch.length > 0) {
+      const { data: relatedEvents, error: relatedEventsError } = await supabase
+        .from("events")
+        .select("id, title")
+        .in("id", idsToFetch)
+
+      if (relatedEventsError) {
+        console.error(relatedEventsError)
       }
+
+      for (const relatedEvent of relatedEvents ?? []) {
+        eventTitleMap.set(relatedEvent.id, relatedEvent.title)
+      }
+    }
+  }
+
+  const participants = participantRows.reduce<EventParticipant[]>((acc, registration) => {
+    const userEventIds = participantRegistrations
+      .filter((participantRegistration) => participantRegistration.user_id === registration.user_id)
+      .map((participantRegistration) => participantRegistration.event_id)
+
+    const sharedEventIds = currentUserEventIdSet.size
+      ? Array.from(new Set(userEventIds.filter((eventId) => currentUserEventIdSet.has(eventId))))
+      : userEventIds.includes(params.id)
+        ? [params.id]
+        : []
+
+    if (!sharedEventIds.length) {
+      return acc
+    }
+
+    const sharedEventTitles = sharedEventIds
+      .map((eventId) => eventTitleMap.get(eventId))
+      .filter((title): title is string => Boolean(title))
+
+    if (!sharedEventTitles.length) {
+      return acc
+    }
+
+    const { age_group: ageGroup, occupation, discovery } = registration
+
+    if (!ageGroup || !occupation || !discovery) {
+      return acc
+    }
+
+    acc.push({
+      id: registration.user_id,
+      ageGroup,
+      occupation,
+      discovery,
+      sharedEventTitles,
+      other: registration.other ?? undefined,
     })
 
-  const participants: EventParticipant[] = Array.from(eventParticipantUsers.values())
-    .filter((user) => !currentUser || user.id !== currentUser.id)
-    .map((user) => {
-      const userEventIds = mockEventAttendances
-        .filter((attendance) => attendance.userId === user.id)
-        .map((attendance) => attendance.eventId)
+    return acc
+  }, [])
 
-      const sharedEventIds = currentUser
-        ? Array.from(new Set(userEventIds.filter((eventId) => currentUserEventIdSet.has(eventId))))
-        : userEventIds.includes(params.id)
-          ? [params.id]
-          : []
-
-      if (!sharedEventIds.length) {
-        return null
-      }
-
-      const sharedEventTitles = sharedEventIds
-        .map((eventId) => mockEvents.find((mockEvent) => mockEvent.id === eventId))
-        .filter((sharedEvent): sharedEvent is Event => Boolean(sharedEvent))
-        .map((sharedEvent) => sharedEvent.title)
-
-      return {
-        id: user.id,
-        ageGroup: user.ageGroup,
-        occupation: user.occupation,
-        discovery: user.discovery,
-        sharedEventTitles,
-      }
-    })
-    .filter((participant): participant is EventParticipant => participant !== null)
+  const hasAppliedToEvent = currentUserEventIdSet.has(params.id)
 
   return (
     <div className="min-h-screen bg-background">

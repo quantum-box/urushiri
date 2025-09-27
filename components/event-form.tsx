@@ -19,16 +19,7 @@ interface EventFormProps {
   onCancel: () => void
 }
 
-const categories = [
-  "テクノロジー",
-  "デザイン",
-  "ビジネス",
-  "教育",
-  "エンターテイメント",
-  "スポーツ",
-  "アート",
-  "その他",
-]
+const categories = ["カフェ会", "お散歩", "ランチ", "お茶会", "読書会", "映画鑑賞", "アート鑑賞", "その他"]
 
 export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
   const [formData, setFormData] = useState({
@@ -38,7 +29,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
     time: event?.time || "",
     location: event?.location || "",
     category: event?.category || "",
-    maxAttendees: event?.maxAttendees || 50,
+    maxAttendees: event?.maxAttendees || 8, // Changed default from 50 to 8 for more intimate gatherings
     currentAttendees: event?.currentAttendees || 0,
     isPublic: event?.isPublic ?? true,
   })
@@ -55,9 +46,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
   return (
     <Card className="max-w-2xl mx-auto bg-card border-border">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl text-card-foreground">
-          {event ? "イベントを編集" : "新しいイベントを作成"}
-        </CardTitle>
+        <CardTitle className="text-xl text-card-foreground">{event ? "集まりを編集" : "新しい集まりを作成"}</CardTitle>
         <Button variant="ghost" size="sm" onClick={onCancel} className="h-8 w-8 p-0">
           <X className="h-4 w-4" />
         </Button>
@@ -67,13 +56,13 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="title" className="text-foreground">
-                イベント名 *
+                集まりの名前 *
               </Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleChange("title", e.target.value)}
-                placeholder="イベント名を入力"
+                placeholder="集まりの名前を入力"
                 required
                 className="bg-input border-border text-foreground"
               />
@@ -106,7 +95,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
               id="description"
               value={formData.description}
               onChange={(e) => handleChange("description", e.target.value)}
-              placeholder="イベントの詳細を入力"
+              placeholder="集まりの詳細を入力"
               rows={3}
               className="bg-input border-border text-foreground"
             />
@@ -194,7 +183,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
               onCheckedChange={(checked) => handleChange("isPublic", checked)}
             />
             <Label htmlFor="isPublic" className="text-foreground">
-              公開イベント
+              公開集まり
             </Label>
           </div>
 

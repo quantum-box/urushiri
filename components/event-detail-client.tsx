@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-react"
+import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Heart } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
@@ -21,7 +21,7 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
     if (event) {
       const shareUrl = `${window.location.origin}/events/${event.id}`
       navigator.clipboard.writeText(shareUrl)
-      console.log("イベントURLをコピーしました:", shareUrl)
+      console.log("集まりのURLをコピーしました:", shareUrl)
     }
   }
 
@@ -40,8 +40,8 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
 
       {!event ? (
         <div className="text-center py-12">
-          <div className="text-muted-foreground text-lg mb-4">イベントが見つかりません</div>
-          <p className="text-muted-foreground">指定されたイベントは存在しないか、削除された可能性があります</p>
+          <div className="text-muted-foreground text-lg mb-4">集まりが見つかりません</div>
+          <p className="text-muted-foreground">指定された集まりは存在しないか、削除された可能性があります</p>
         </div>
       ) : (
         <div className="max-w-4xl mx-auto">
@@ -50,7 +50,7 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-6 w-6 text-primary" />
+                    <Heart className="h-6 w-6 text-primary" />
                     <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                       {event.category}
                     </Badge>
@@ -85,7 +85,7 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
 
             <CardContent className="space-y-8">
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-3">イベント詳細</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-3">集まりについて</h3>
                 <p className="text-muted-foreground leading-relaxed">{event.description}</p>
               </div>
 
@@ -108,7 +108,7 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
                       <MapPin className="h-5 w-5 text-primary" />
                       <div>
                         <div className="font-medium">{event.location}</div>
-                        <div className="text-sm text-muted-foreground">会場</div>
+                        <div className="text-sm text-muted-foreground">場所</div>
                       </div>
                     </div>
                   </div>
@@ -146,13 +146,13 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
               <div className="border-t border-border pt-6">
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>作成日: {format(new Date(event.createdAt), "yyyy年M月d日", { locale: ja })}</span>
-                  <span>イベントID: {event.id}</span>
+                  <span>集まりID: {event.id}</span>
                 </div>
               </div>
 
               <div className="flex gap-3 pt-4">
                 <Button size="lg" className="flex-1">
-                  参加申し込み
+                  参加する
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleShare}>
                   <Share2 className="h-4 w-4 mr-2" />

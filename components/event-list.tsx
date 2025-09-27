@@ -4,9 +4,10 @@ import type { Event } from "@/app/page"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Edit, Trash2, MapPin, Clock, Users, Share2 } from "lucide-react"
+import { Edit, Trash2, MapPin, Clock, Users, Share2, Eye } from "lucide-react"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
+import { useRouter } from "next/navigation"
 
 interface EventListProps {
   events: Event[]
@@ -15,11 +16,16 @@ interface EventListProps {
 }
 
 export function EventList({ events, onEdit, onDelete }: EventListProps) {
+  const router = useRouter()
+
   const handleShare = (event: Event) => {
     const shareUrl = `${window.location.origin}/events/${event.id}`
     navigator.clipboard.writeText(shareUrl)
-    // Toast notification would go here
     console.log("イベントURLをコピーしました:", shareUrl)
+  }
+
+  const handleViewDetail = (eventId: string) => {
+    router.push(`/events/${eventId}`)
   }
 
   if (events.length === 0) {
@@ -44,6 +50,14 @@ export function EventList({ events, onEdit, onDelete }: EventListProps) {
                 </Badge>
               </div>
               <div className="flex gap-1 ml-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleViewDetail(event.id)}
+                  className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -109,6 +123,16 @@ export function EventList({ events, onEdit, onDelete }: EventListProps) {
                 {format(new Date(event.createdAt), "M/d作成", { locale: ja })}
               </span>
             </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleViewDetail(event.id)}
+              className="w-full mt-3 flex items-center gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              詳細を見る
+            </Button>
           </CardContent>
         </Card>
       ))}

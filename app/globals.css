@@ -4,77 +4,95 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* ライトテーマの色パレットに変更 */
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.15 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0 0);
-  --primary: oklch(0.55 0.18 250);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.95 0 0);
-  --secondary-foreground: oklch(0.25 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.94 0 0);
-  --accent-foreground: oklch(0.15 0 0);
-  --destructive: oklch(0.6 0.25 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.96 0 0);
-  --ring: oklch(0.55 0.18 250);
-  --chart-1: oklch(0.55 0.18 250);
-  --chart-2: oklch(0.6 0.15 180);
-  --chart-3: oklch(0.5 0.2 120);
-  --chart-4: oklch(0.65 0.18 60);
-  --chart-5: oklch(0.58 0.22 300);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: oklch(0.15 0 0);
-  --sidebar-primary: oklch(0.55 0.18 250);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.94 0 0);
-  --sidebar-accent-foreground: oklch(0.15 0 0);
-  --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0.55 0.18 250);
+  /* プーさん風カラーパレットに変更 */
+  /* プライマリカラー */
+  --honey-yellow: #fbbf24;
+  --pooh-brown: #b45309;
+  --soft-peach: #fed7aa;
+  --cream-white: #fffbeb;
+
+  /* アクセントカラー */
+  --piglet-pink: #f9a8d4;
+  --eeyore-blue: #93c5fd;
+  --tigger-orange: #fb923c;
+  --forest-green: #4ade80;
+
+  /* テキストカラー */
+  --text-primary: #92400e;
+  --text-secondary: #b45309;
+  --text-tertiary: #d97706;
+
+  /* システムカラーをプーさんテーマに合わせて調整 */
+  --background: #fffbeb; /* cream-white */
+  --foreground: #92400e; /* text-primary */
+  --card: #ffffff;
+  --card-foreground: #92400e;
+  --popover: #ffffff;
+  --popover-foreground: #92400e;
+  --primary: #fbbf24; /* honey-yellow */
+  --primary-foreground: #ffffff;
+  --secondary: #fed7aa; /* soft-peach */
+  --secondary-foreground: #b45309;
+  --muted: #fef3c7;
+  --muted-foreground: #d97706;
+  --accent: #f9a8d4; /* piglet-pink */
+  --accent-foreground: #92400e;
+  --destructive: #f87171;
+  --destructive-foreground: #ffffff;
+  --border: #fde68a;
+  --input: #ffffff;
+  --ring: #fbbf24;
+  --chart-1: #fbbf24;
+  --chart-2: #f9a8d4;
+  --chart-3: #4ade80;
+  --chart-4: #fb923c;
+  --chart-5: #93c5fd;
+  --radius: 1rem; /* より丸みを帯びた親しみやすいデザイン */
+  --sidebar: #fffbeb;
+  --sidebar-foreground: #92400e;
+  --sidebar-primary: #fbbf24;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fed7aa;
+  --sidebar-accent-foreground: #b45309;
+  --sidebar-border: #fde68a;
+  --sidebar-ring: #fbbf24;
 }
 
 .dark {
-  /* ダークテーマは元の値を保持 */
-  --background: oklch(0.08 0 0);
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.12 0 0);
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.12 0 0);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.65 0.2 260);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.85 0 0);
-  --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.2 0 0);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.6 0.25 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.65 0.2 260);
-  --chart-1: oklch(0.65 0.2 260);
-  --chart-2: oklch(0.7 0.15 180);
-  --chart-3: oklch(0.6 0.2 120);
-  --chart-4: oklch(0.75 0.18 60);
-  --chart-5: oklch(0.68 0.22 300);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.1 0 0);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.65 0.2 260);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.18 0 0);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.25 0 0);
-  --sidebar-ring: oklch(0.65 0.2 260);
+  /* ダークテーマも温かみのある色調に調整 */
+  --background: #1c1917;
+  --foreground: #fef3c7;
+  --card: #292524;
+  --card-foreground: #fef3c7;
+  --popover: #292524;
+  --popover-foreground: #fef3c7;
+  --primary: #fbbf24;
+  --primary-foreground: #1c1917;
+  --secondary: #44403c;
+  --secondary-foreground: #fed7aa;
+  --muted: #3c3530;
+  --muted-foreground: #d97706;
+  --accent: #f9a8d4;
+  --accent-foreground: #1c1917;
+  --destructive: #f87171;
+  --destructive-foreground: #ffffff;
+  --border: #44403c;
+  --input: #292524;
+  --ring: #fbbf24;
+  --chart-1: #fbbf24;
+  --chart-2: #f9a8d4;
+  --chart-3: #4ade80;
+  --chart-4: #fb923c;
+  --chart-5: #93c5fd;
+  --radius: 1rem;
+  --sidebar: #1c1917;
+  --sidebar-foreground: #fef3c7;
+  --sidebar-primary: #fbbf24;
+  --sidebar-primary-foreground: #1c1917;
+  --sidebar-accent: #44403c;
+  --sidebar-accent-foreground: #fed7aa;
+  --sidebar-border: #44403c;
+  --sidebar-ring: #fbbf24;
 }
 
 @theme inline {
@@ -124,5 +142,34 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* プーさんテーマに合わせた背景グラデーション追加 */
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    min-height: 100vh;
   }
+}
+
+/* プーさんテーマ用のカスタムクラス追加 */
+.honey-gradient {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.soft-gradient {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.warm-gradient {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #f9a8d4 100%);
+}
+
+.pooh-shadow {
+  box-shadow: 0 10px 25px rgba(251, 191, 36, 0.15);
+}
+
+.pooh-hover {
+  transition: all 0.2s ease;
+}
+
+.pooh-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(251, 191, 36, 0.25);
 }

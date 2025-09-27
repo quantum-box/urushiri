@@ -156,16 +156,23 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <Calendar className="h-8 w-8 text-primary" />
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">イベント一覧</h2>
-            <p className="text-muted-foreground">イベントの作成、編集、削除ができます</p>
+    <div className="mx-auto w-full max-w-5xl px-6 py-10">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <span className="mt-1 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+            <Calendar className="h-6 w-6" />
+          </span>
+          <div className="space-y-2">
+            <h2 className="text-[32px] font-semibold leading-tight text-foreground">イベント一覧</h2>
+            <p className="text-sm text-muted-foreground">開催予定のイベントを確認し、新規作成や内容の更新ができます。</p>
           </div>
         </div>
-        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2" size="lg" disabled={isProcessing}>
+        <Button
+          onClick={() => setShowForm(true)}
+          className="flex items-center gap-2"
+          size="lg"
+          disabled={isProcessing}
+        >
           <Plus className="h-5 w-5" />
           新しいイベント
         </Button>

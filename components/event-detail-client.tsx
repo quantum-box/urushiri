@@ -75,178 +75,179 @@ export function EventDetailClient({
   const participantCount = participants.length
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-6 flex items-center gap-2">
+    <div className="mx-auto w-full max-w-5xl px-6 py-10">
+      <Button
+        variant="ghost"
+        onClick={() => router.back()}
+        className="mb-6 inline-flex items-center gap-2 px-0 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-4 w-4" />
         戻る
       </Button>
 
       {!event ? (
-        <div className="text-center py-12">
-          <div className="text-muted-foreground text-lg mb-4">イベントが見つかりません</div>
-          <p className="text-muted-foreground">指定されたイベントは存在しないか、削除された可能性があります</p>
+        <div className="rounded-[16px] border border-dashed border-border/80 bg-white/70 px-8 py-16 text-center">
+          <div className="mb-3 text-lg font-medium text-foreground">イベントが見つかりませんでした</div>
+          <p className="text-sm text-muted-foreground">
+            指定されたイベントは存在しないか、削除された可能性があります。
+          </p>
         </div>
       ) : (
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-card border-border">
-            <CardHeader className="pb-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-6 w-6 text-primary" />
-                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                      {event.category}
-                    </Badge>
-                    <Badge variant={event.isPublic ? "default" : "secondary"}>
-                      {event.isPublic ? "公開" : "非公開"}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-3xl text-card-foreground mb-4">{event.title}</CardTitle>
-                </div>
-                <div className="flex gap-2 ml-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleShare}
-                    className="flex items-center gap-2 bg-transparent"
-                  >
-                    <Share2 className="h-4 w-4" />
-                    シェア
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleEdit}
-                    className="flex items-center gap-2 bg-transparent"
-                  >
-                    <Edit className="h-4 w-4" />
-                    編集
-                  </Button>
-                </div>
+        <div className="space-y-6">
+          <Card className="border border-border/80 bg-white/95 shadow-none">
+            <CardHeader className="space-y-5 pb-0">
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <Badge variant="secondary">{event.category}</Badge>
+                <Badge variant={event.isPublic ? "neutral" : "outline"}>
+                  {event.isPublic ? "公開イベント" : "非公開"}
+                </Badge>
+                <span className="text-muted-foreground">ID: {event.id}</span>
+              </div>
+              <CardTitle className="text-[28px] font-semibold leading-tight text-card-foreground">
+                {event.title}
+              </CardTitle>
+              {event.description && (
+                <p className="text-sm leading-relaxed text-muted-foreground">{event.description}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShare}
+                  className="rounded-full border-transparent bg-accent/40 text-primary hover:border-primary/40 hover:bg-accent"
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  シェア
+                </Button>
+                <Button variant="ghost" size="sm" onClick={handleEdit} className="rounded-full px-4 text-foreground/80">
+                  <Edit className="mr-2 h-4 w-4" />
+                  編集
+                </Button>
               </div>
             </CardHeader>
 
-            <CardContent className="space-y-8">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-3">イベント詳細</h3>
-                <p className="text-muted-foreground leading-relaxed">{event.description}</p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">開催情報</h3>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-foreground">
-                      <Clock className="h-5 w-5 text-primary" />
-                      <div>
+            <CardContent className="space-y-8 pt-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <section className="space-y-4">
+                  <h3 className="text-base font-semibold text-foreground">開催情報</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="h-5 w-5 text-primary" />
+                      <div className="text-foreground">
                         <div className="font-medium">
                           {format(parseISO(event.date), "yyyy年M月d日（E）", { locale: ja })}
                         </div>
-                        <div className="text-sm text-muted-foreground">{event.time}開始</div>
+                        <div className="text-xs text-muted-foreground">{event.time} 開始</div>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-3 text-foreground">
+                    <div className="flex items-center gap-3">
                       <MapPin className="h-5 w-5 text-primary" />
-                      <div>
+                      <div className="text-foreground">
                         <div className="font-medium">{event.location}</div>
-                        <div className="text-sm text-muted-foreground">会場</div>
+                        <div className="text-xs text-muted-foreground">会場情報</div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </section>
 
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-foreground">参加状況</h3>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-foreground">
+                <section className="space-y-4">
+                  <h3 className="text-base font-semibold text-foreground">参加状況</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-3">
                       <Users className="h-5 w-5 text-primary" />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
+                      <div className="flex-1 text-foreground">
+                        <div className="flex items-center justify-between">
                           <span className="font-medium">
                             {event.currentAttendees} / {event.maxAttendees} 人
                           </span>
-                          <span className="text-sm text-muted-foreground">{attendancePercentage.toFixed(0)}%</span>
+                          <span className="text-xs text-muted-foreground">{attendancePercentage.toFixed(0)}%</span>
                         </div>
-                        <div className="bg-muted rounded-full h-3">
+                        <div className="mt-2 h-2.5 w-full rounded-full bg-muted">
                           <div
-                            className="bg-primary h-3 rounded-full transition-all"
+                            className="h-2.5 rounded-full bg-primary transition-all"
                             style={{ width: `${attendancePercentage}%` }}
                           />
                         </div>
                       </div>
                     </div>
-
-                    <div className="text-sm text-muted-foreground">
-                      残り {event.maxAttendees - event.currentAttendees} 席
+                    <div className="text-xs text-muted-foreground">
+                      残り {Math.max(event.maxAttendees - event.currentAttendees, 0)} 席
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
 
-              {aiSummarySection}
+              {aiSummarySection && (
+                <div className="rounded-[12px] border border-border/70 bg-white/80 p-5">
+                  {aiSummarySection}
+                </div>
+              )}
 
-              <div className="space-y-6 border-t border-border pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">共通イベント参加者</h3>
-                    <p className="text-sm text-muted-foreground">あなたと共通の参加履歴があるユーザー: {participantCount} 名</p>
-                  </div>
-                  {participantCount === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      {hasAppliedToEvent
-                        ? "あなたと共通の参加履歴があるユーザーはまだ見つかりません。"
-                        : "このイベントに参加申し込みすると、共通の参加履歴があるユーザーが表示されます。"}
-                    </p>
-                  ) : (
-                    <ul className="space-y-3">
-                      {participants.map((participant) => (
-                        <li
-                          key={participant.id}
-                          className="rounded-lg border border-border bg-muted/10 p-4"
-                        >
-                          <div className="flex flex-col gap-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
-                                {AGE_GROUP_LABELS[participant.ageGroup]}
-                              </span>
-                              <span className="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-foreground">
-                                {OCCUPATION_LABELS[participant.occupation]}
-                              </span>
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              認知経路: {DISCOVERY_LABELS[participant.discovery]}
-                            </div>
-                            {participant.sharedEventTitles.length > 0 && (
-                              <div className="text-xs text-muted-foreground">
-                                共通参加イベント: {participant.sharedEventTitles.join(" / ")}
-                              </div>
-                            )}
-                            {participant.other && (
-                              <p className="text-sm text-muted-foreground">その他: {participant.other}</p>
-                            )}
+              <section className="space-y-5 rounded-[12px] border border-border/70 bg-muted/30 p-5">
+                <div className="space-y-1">
+                  <h3 className="text-base font-semibold text-foreground">共通イベント参加者</h3>
+                  <p className="text-xs text-muted-foreground">
+                    あなたと共通の参加履歴があるユーザー: {participantCount} 名
+                  </p>
+                </div>
+
+                {participantCount === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    {hasAppliedToEvent
+                      ? "あなたと共通の参加履歴があるユーザーはまだ見つかりません。"
+                      : "このイベントに申し込むと、共通の参加履歴があるユーザーが表示されます。"}
+                  </p>
+                ) : (
+                  <ul className="space-y-3">
+                    {participants.map((participant) => (
+                      <li
+                        key={participant.id}
+                        className="rounded-[12px] border border-border/60 bg-white/90 p-4"
+                      >
+                        <div className="flex flex-col gap-2 text-sm text-foreground">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {AGE_GROUP_LABELS[participant.ageGroup]}
+                            </Badge>
+                            <Badge variant="neutral" className="text-xs">
+                              {OCCUPATION_LABELS[participant.occupation]}
+                            </Badge>
                           </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+                          <div className="text-xs text-muted-foreground">
+                            認知経路: {DISCOVERY_LABELS[participant.discovery]}
+                          </div>
+                          {participant.sharedEventTitles.length > 0 && (
+                            <div className="text-xs text-muted-foreground">
+                              共通参加イベント: {participant.sharedEventTitles.join(" / ")}
+                            </div>
+                          )}
+                          {participant.other && (
+                            <p className="text-sm text-muted-foreground">その他: {participant.other}</p>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>作成日: {format(new Date(event.createdAt), "yyyy年M月d日", { locale: ja })}</span>
-                  <span>イベントID: {event.id}</span>
-                </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
+                <span>作成日: {format(new Date(event.createdAt), "yyyy年M月d日", { locale: ja })}</span>
+                <span>現在の参加者: {event.currentAttendees} 名</span>
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <Button size="lg" className="flex-1" onClick={handleRegister} disabled={hasAppliedToEvent}>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Button size="lg" className="flex-1 min-w-[200px]" onClick={handleRegister} disabled={hasAppliedToEvent}>
                   {hasAppliedToEvent ? "申し込み済み" : "参加申し込み"}
                 </Button>
-                <Button variant="outline" size="lg" onClick={handleShare}>
-                  <Share2 className="h-4 w-4 mr-2" />
-                  シェア
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 min-w-[200px]"
+                  onClick={handleShare}
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  イベントをシェア
                 </Button>
               </div>
             </CardContent>

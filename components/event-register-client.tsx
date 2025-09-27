@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   Select,
   SelectContent,
@@ -16,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Calendar, MapPin, Users, CheckCircle } from "lucide-react"
+import { ArrowLeft, Calendar, MapPin, Users } from "lucide-react"
 import { format, parseISO } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
@@ -191,65 +192,61 @@ export function EventRegisterClient({ event, eventId, userId, existingRegistrati
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6 flex items-center gap-2">
+      <div className="mx-auto w-full max-w-5xl px-6 py-10">
+        <Button
+          variant="ghost"
+          onClick={() => router.back()}
+          className="mb-6 inline-flex items-center gap-2 px-0 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-4 w-4" />
           戻る
         </Button>
 
-        <div className="max-w-3xl mx-auto space-y-6">
-          <Card className="bg-card border-border">
-            <CardHeader className="pb-4">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-primary" />
-                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                      {eventState.category}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-2xl text-card-foreground">{eventState.title}</CardTitle>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {format(parseISO(eventState.date), "yyyy年M月d日（E）", { locale: ja })} {eventState.time}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {eventState.location}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      定員 {eventState.maxAttendees} 名 / 残り {Math.max(eventState.maxAttendees - eventState.currentAttendees, 0)} 席
-                    </span>
-                  </div>
-                </div>
+        <div className="mx-auto max-w-3xl space-y-6">
+          <Card className="border border-border/80 bg-white/95 shadow-none">
+            <CardHeader className="space-y-4 pb-4">
+              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                <Badge variant="secondary">{eventState.category}</Badge>
+                <span className="inline-flex items-center gap-1 text-foreground">
+                  <Calendar className="h-4 w-4 text-primary" />
+                  {format(parseISO(eventState.date), "yyyy年M月d日（E）", { locale: ja })} {eventState.time}
+                </span>
+                <span className="inline-flex items-center gap-1 text-foreground">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  {eventState.location}
+                </span>
+                <span className="inline-flex items-center gap-1 text-foreground">
+                  <Users className="h-4 w-4 text-primary" />
+                  定員 {eventState.maxAttendees} 名 / 残り {Math.max(eventState.maxAttendees - eventState.currentAttendees, 0)} 席
+                </span>
               </div>
+              <CardTitle className="text-2xl font-semibold text-card-foreground">
+                {eventState.title}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground leading-relaxed">{eventState.description}</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">{eventState.description}</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-border">
+          <Card className="border border-border/80 bg-white/95 shadow-none">
             <CardHeader>
-              <CardTitle className="text-card-foreground">参加申し込みフォーム</CardTitle>
+              <CardTitle className="text-xl font-semibold text-card-foreground">参加申し込みフォーム</CardTitle>
             </CardHeader>
             <CardContent>
               {submitted ? (
                 <div className="space-y-6">
-                  <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700">
-                    <CheckCircle className="h-5 w-5" />
-                    <div>
-                      <p className="font-medium">申し込みを受け付けました</p>
-                      <p className="text-sm">担当者よりご連絡いたします。ご参加ありがとうございます。</p>
-                    </div>
-                  </div>
+                  <Alert variant="success">
+                    <AlertTitle>申し込みを受け付けました</AlertTitle>
+                    <AlertDescription>
+                      担当者よりご連絡いたします。ご参加ありがとうございます。
+                    </AlertDescription>
+                  </Alert>
                   <div className="flex flex-wrap gap-3">
-                    <Button onClick={() => router.push(`/events/${eventId}`)} className="flex-1 min-w-[160px]">
+                    <Button onClick={() => router.push(`/events/${eventId}`)} className="flex-1 min-w-[180px]">
                       イベント詳細に戻る
                     </Button>
-                    <Button variant="outline" onClick={handleReset} className="flex-1 min-w-[160px]">
+                    <Button variant="outline" onClick={handleReset} className="flex-1 min-w-[180px]">
                       もう一度申し込む
                     </Button>
                   </div>
@@ -257,15 +254,16 @@ export function EventRegisterClient({ event, eventId, userId, existingRegistrati
               ) : (
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   {error && (
-                    <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-                      {error}
-                    </div>
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
                   )}
 
                   {isFull && !hasRegistered && (
-                    <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700">
-                      満席のため現在申し込みできません。
-                    </div>
+                    <Alert variant="warning">
+                      <AlertTitle>満席です</AlertTitle>
+                      <AlertDescription>満席のため現在申し込みできません。</AlertDescription>
+                    </Alert>
                   )}
 
                   <div className="space-y-2">
@@ -358,14 +356,14 @@ export function EventRegisterClient({ event, eventId, userId, existingRegistrati
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    <Button type="submit" className="flex-1 min-w-[160px]" disabled={isSubmitting || !canApply}>
+                    <Button type="submit" className="flex-1 min-w-[180px]" disabled={isSubmitting || !canApply}>
                       {isSubmitting ? "送信中..." : "申し込む"}
                     </Button>
                     <Button
                       type="button"
                       variant="outline"
                       onClick={() => router.push(`/events/${eventId}`)}
-                      className="flex-1 min-w-[160px]"
+                      className="flex-1 min-w-[180px]"
                       disabled={isSubmitting}
                     >
                       キャンセル

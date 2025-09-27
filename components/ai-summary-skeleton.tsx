@@ -22,16 +22,16 @@ export function AiSummarySkeleton({ className }: AiSummarySkeletonProps) {
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-xl border border-primary/25 bg-gradient-to-r from-violet-500/15 via-fuchsia-500/15 to-cyan-500/15 px-6 py-6",
+        "relative w-full overflow-hidden rounded-[12px] border border-primary/25 bg-accent/40 px-5 py-5 text-sm text-muted-foreground",
         className,
       )}
     >
       <style dangerouslySetInnerHTML={{ __html: shimmerKeyframes }} />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
         style={{ animation: "ai-summary-shimmer 1.8s linear infinite" }}
       />
-      <div className="relative text-center text-sm font-medium text-white/70">
+      <div className="relative text-center font-medium text-foreground/70">
         AIインサイトを生成しています...
       </div>
     </div>

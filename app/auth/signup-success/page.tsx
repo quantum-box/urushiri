@@ -5,14 +5,18 @@ import { Calendar, Mail } from "lucide-react"
 
 export default function SignUpSuccessPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Calendar className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl">アカウント作成完了</CardTitle>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+      <Card className="w-full max-w-md border border-border/80 bg-white/95 shadow-none">
+        <CardHeader className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+            <Calendar className="h-6 w-6" />
           </div>
-          <CardDescription>メールアドレスの確認が必要です</CardDescription>
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-semibold text-foreground">アカウント作成完了</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              メールアドレスを確認してください。
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <div className="flex justify-center">
@@ -22,7 +26,7 @@ export default function SignUpSuccessPage() {
             登録したメールアドレスに確認メールを送信しました。
             メール内のリンクをクリックしてアカウントを有効化してください。
           </p>
-          <Button asChild className="w-full">
+          <Button asChild size="lg" className="w-full">
             <Link href="/signin">サインインページに戻る</Link>
           </Button>
         </CardContent>

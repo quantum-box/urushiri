@@ -57,12 +57,12 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
   }
 
   return (
-    <Card className="max-w-2xl mx-auto bg-card border-border">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl text-card-foreground">
+    <Card className="mx-auto max-w-3xl border border-border/80 bg-white/95 shadow-none">
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
+        <CardTitle className="text-2xl font-semibold text-card-foreground">
           {event ? "イベントを編集" : "新しいイベントを作成"}
         </CardTitle>
-        <Button variant="ghost" size="sm" onClick={onCancel} className="h-8 w-8 p-0">
+        <Button variant="ghost" size="sm" onClick={onCancel} className="h-9 w-9 rounded-full text-muted-foreground">
           <X className="h-4 w-4" />
         </Button>
       </CardHeader>
@@ -79,7 +79,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                 onChange={(e) => handleChange("title", e.target.value)}
                 placeholder="イベント名を入力"
                 required
-                className="bg-input border-border text-foreground"
                 disabled={isSubmitting}
               />
             </div>
@@ -89,7 +88,7 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                 カテゴリー *
               </Label>
               <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
-                <SelectTrigger className="bg-input border-border text-foreground" disabled={isSubmitting}>
+                <SelectTrigger disabled={isSubmitting}>
                   <SelectValue placeholder="カテゴリーを選択" />
                 </SelectTrigger>
                 <SelectContent>
@@ -113,7 +112,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
               onChange={(e) => handleChange("description", e.target.value)}
               placeholder="イベントの詳細を入力"
               rows={3}
-              className="bg-input border-border text-foreground"
               disabled={isSubmitting}
             />
           </div>
@@ -129,7 +127,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                 value={formData.date}
                 onChange={(e) => handleChange("date", e.target.value)}
                 required
-                className="bg-input border-border text-foreground"
                 disabled={isSubmitting}
               />
             </div>
@@ -144,7 +141,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                 value={formData.time}
                 onChange={(e) => handleChange("time", e.target.value)}
                 required
-                className="bg-input border-border text-foreground"
                 disabled={isSubmitting}
               />
             </div>
@@ -159,7 +155,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                 min="1"
                 value={formData.maxAttendees}
                 onChange={(e) => handleChange("maxAttendees", Number.parseInt(e.target.value) || 0)}
-                className="bg-input border-border text-foreground"
                 disabled={isSubmitting}
               />
             </div>
@@ -175,7 +170,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
               onChange={(e) => handleChange("location", e.target.value)}
               placeholder="開催場所を入力"
               required
-              className="bg-input border-border text-foreground"
               disabled={isSubmitting}
             />
           </div>
@@ -192,7 +186,6 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                 max={formData.maxAttendees}
                 value={formData.currentAttendees}
                 onChange={(e) => handleChange("currentAttendees", Number.parseInt(e.target.value) || 0)}
-                className="bg-input border-border text-foreground"
                 disabled={isSubmitting}
               />
             </div>
@@ -210,12 +203,18 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
             </Label>
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1 flex items-center gap-2" disabled={isSubmitting}>
+          <div className="flex flex-wrap gap-3 pt-4">
+            <Button type="submit" className="flex-1 min-w-[160px] items-center gap-2" disabled={isSubmitting}>
               <Save className="h-4 w-4" />
               {event ? "更新" : "作成"}
             </Button>
-            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="flex-1 min-w-[160px]"
+            >
               キャンセル
             </Button>
           </div>

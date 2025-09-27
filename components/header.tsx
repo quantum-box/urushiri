@@ -44,26 +44,32 @@ export function Header() {
   if (!user) return null
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Calendar className="h-6 w-6 text-primary" />
-          <Link href="/" className="text-xl font-semibold text-foreground">
-            イベント管理システム
-          </Link>
-        </div>
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
+        <Link href="/" className="flex items-center gap-3 text-foreground transition-opacity hover:opacity-80">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-primary">
+            <Calendar className="h-5 w-5" />
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="text-base font-semibold tracking-tight">ゆるしり</span>
+            <span className="text-xs text-muted-foreground">イベントでゆるっとつながる</span>
+          </span>
+        </Link>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
+            <Button
+              variant="ghost"
+              className="group flex items-center gap-3 rounded-full bg-white/60 px-3 py-1.5 text-sm font-medium text-foreground/80 shadow-none transition-all hover:bg-white hover:text-foreground"
+            >
+              <Avatar className="h-9 w-9">
                 <AvatarFallback>{user.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
               </Avatar>
-              <span className="hidden sm:inline">{user.email}</span>
+              <span className="hidden sm:inline max-w-[200px] truncate">{user.email}</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem disabled>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem disabled className="text-muted-foreground">
               <User className="mr-2 h-4 w-4" />
               {user.email}
             </DropdownMenuItem>

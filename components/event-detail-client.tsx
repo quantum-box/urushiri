@@ -1,96 +1,49 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
-import { Header } from "@/components/header"
-import { EventDetailClient } from "@/components/event-detail-client"
+"use client"
+
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-react"
+import { format } from "date-fns"
+import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
 
-// モックデータ（実際のアプリでは、APIやデータベースから取得）
-const mockEvents: Event[] = [
-  {
-    id: "1",
-    title: "テックカンファレンス 2025",
-    description:
-      "最新のテクノロジートレンドについて学ぶカンファレンス。AI、機械学習、Web開発の最新動向について業界のエキスパートが講演します。ネットワーキングの機会もあり、同じ志を持つ開発者との交流も期待できます。",
-    date: "2025-03-15",
-    time: "10:00",
-    location: "東京国際フォーラム",
-    category: "テクノロジー",
-    maxAttendees: 500,
-    currentAttendees: 234,
-    isPublic: true,
-    createdAt: "2025-01-15T10:00:00Z",
-  },
-  {
-    id: "2",
-    title: "デザインワークショップ",
-    description:
-      "UI/UXデザインの基礎を学ぶハンズオンワークショップ。Figmaを使った実践的なデザイン制作を通じて、ユーザー中心のデザイン思考を身につけます。",
-    date: "2025-02-28",
-    time: "14:00",
-    location: "渋谷クリエイティブセンター",
-    category: "デザイン",
-    maxAttendees: 30,
-    currentAttendees: 18,
-    isPublic: true,
-    createdAt: "2025-01-10T14:30:00Z",
-  },
-]
-
-interface EventDetailPageProps {
-  params: { id: string }
+interface EventDetailClientProps {
+  event: Event | null
+  eventId: string
 }
 
-export default async function EventDetailPage({ params }: EventDetailPageProps) {
-  const supabase = await createClient()
-  const { data, error } = await supabase.auth.getUser()
+export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
+  const router = useRouter()
 
-  if (error || !data?.user) {
-    redirect("/signin")
+  const handleShare = () => {
+    if (event) {
+      const shareUrl = `${window.location.origin}/events/${event.id}`
+      navigator.clipboard.writeText(shareUrl)
+      console.log("イベントURLをコピーしました:", shareUrl)
+    }
   }
 
   const handleEdit = () => {
-    router.push(`/?edit=${params.id}`)
+    router.push(`/?edit=${eventId}`)
   }
 
-  const handleRegister = () => {
-    router.push(`/events/${params.id}/register`)
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-muted-foreground">読み込み中...</div>
-      </div>
-    )
-  }
-
-  if (!event) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-6 flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            戻る
-          </Button>
-          <div className="text-center py-12">
-            <div className="text-muted-foreground text-lg mb-4">イベントが見つかりません</div>
-            <p className="text-muted-foreground">指定されたイベントは存在しないか、削除された可能性があります</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const attendancePercentage = Math.min((event.currentAttendees / event.maxAttendees) * 100, 100)
+  const attendancePercentage = event ? Math.min((event.currentAttendees / event.maxAttendees) * 100, 100) : 0
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6 flex items-center gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          戻る
-        </Button>
+    <div className="container mx-auto px-4 py-8">
+      <Button variant="ghost" onClick={() => router.back()} className="mb-6 flex items-center gap-2">
+        <ArrowLeft className="h-4 w-4" />
+        戻る
+      </Button>
 
+      {!event ? (
+        <div className="text-center py-12">
+          <div className="text-muted-foreground text-lg mb-4">イベントが見つかりません</div>
+          <p className="text-muted-foreground">指定されたイベントは存在しないか、削除された可能性があります</p>
+        </div>
+      ) : (
         <div className="max-w-4xl mx-auto">
           <Card className="bg-card border-border">
             <CardHeader className="pb-6">
@@ -198,7 +151,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button size="lg" className="flex-1" onClick={handleRegister}>
+                <Button size="lg" className="flex-1">
                   参加申し込み
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleShare}>
@@ -209,16 +162,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
             </CardContent>
           </Card>
         </div>
-      </div>
-      
-  // 実際のアプリでは、APIからイベントデータを取得
-  const event = mockEvents.find((e) => e.id === params.id) || null
-
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <EventDetailClient event={event} eventId={params.id} />
-
+      )}
     </div>
   )
 }

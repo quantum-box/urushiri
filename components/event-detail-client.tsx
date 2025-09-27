@@ -8,13 +8,42 @@ import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
+import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
+
+const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
+  teens: "10代以下",
+  twenties: "20代",
+  thirties: "30代",
+  forties: "40代",
+  fifties: "50代",
+  sixtiesPlus: "60代以上",
+}
+
+const OCCUPATION_LABELS: Record<OccupationCategory, string> = {
+  student: "学生",
+  engineer: "エンジニア",
+  designer: "デザイナー",
+  planner: "企画・マーケティング",
+  manager: "マネジメント",
+  other: "その他",
+}
+
+const DISCOVERY_LABELS: Record<DiscoverySource, string> = {
+  sns: "SNS",
+  search: "インターネット検索",
+  friend: "友人・知人の紹介",
+  media: "メディア記事・ブログ",
+  eventSite: "イベント紹介サイト",
+}
 
 interface EventDetailClientProps {
   event: Event | null
   eventId: string
+  participants: EventParticipant[]
+  hasAppliedToEvent: boolean
 }
 
-export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
+export function EventDetailClient({ event, eventId, participants, hasAppliedToEvent }: EventDetailClientProps) {
   const router = useRouter()
 
   const handleShare = () => {
@@ -29,7 +58,12 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
     router.push(`/?edit=${eventId}`)
   }
 
+  const handleRegister = () => {
+    router.push(`/events/${eventId}/register`)
+  }
+
   const attendancePercentage = event ? Math.min((event.currentAttendees / event.maxAttendees) * 100, 100) : 0
+  const participantCount = participants.length
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -143,7 +177,52 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
                 </div>
               </div>
 
-              <div className="border-t border-border pt-6">
+              <div className="space-y-6 border-t border-border pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">共通イベント参加者</h3>
+                    <p className="text-sm text-muted-foreground">あなたと共通の参加履歴があるユーザー: {participantCount} 名</p>
+                  </div>
+                  {participantCount === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      {hasAppliedToEvent
+                        ? "あなたと共通の参加履歴があるユーザーはまだ見つかりません。"
+                        : "このイベントに参加申し込みすると、共通の参加履歴があるユーザーが表示されます。"}
+                    </p>
+                  ) : (
+                    <ul className="space-y-3">
+                      {participants.map((participant) => (
+                        <li
+                          key={participant.id}
+                          className="rounded-lg border border-border bg-muted/10 p-4"
+                        >
+                          <div className="flex flex-col gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
+                                {AGE_GROUP_LABELS[participant.ageGroup]}
+                              </span>
+                              <span className="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-foreground">
+                                {OCCUPATION_LABELS[participant.occupation]}
+                              </span>
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              認知経路: {DISCOVERY_LABELS[participant.discovery]}
+                            </div>
+                            {participant.sharedEventTitles.length > 0 && (
+                              <div className="text-xs text-muted-foreground">
+                                共通参加イベント: {participant.sharedEventTitles.join(" / ")}
+                              </div>
+                            )}
+                            {participant.other && (
+                              <p className="text-sm text-muted-foreground">その他: {participant.other}</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>作成日: {format(new Date(event.createdAt), "yyyy年M月d日", { locale: ja })}</span>
                   <span>イベントID: {event.id}</span>
@@ -151,7 +230,7 @@ export function EventDetailClient({ event, eventId }: EventDetailClientProps) {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Button size="lg" className="flex-1">
+                <Button size="lg" className="flex-1" onClick={handleRegister}>
                   参加申し込み
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleShare}>

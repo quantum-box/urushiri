@@ -14,9 +14,35 @@ interface EventsPageClientProps {
   initialEvents: Event[]
 }
 
+const buildEventTimestamp = (event: Event) => {
+  if (!event.date) {
+    return Number.NEGATIVE_INFINITY
+  }
+
+  const timePart = event.time ? `${event.time}${event.time.length === 5 ? ":00" : ""}` : "00:00:00"
+  const timestamp = Date.parse(`${event.date}T${timePart}`)
+
+  if (Number.isNaN(timestamp)) {
+    return Date.parse(event.date)
+  }
+
+  return timestamp
+}
+
+const sortEventsByStartDesc = (events: Event[]) =>
+  [...events].sort((a, b) => {
+    const diff = buildEventTimestamp(b) - buildEventTimestamp(a)
+
+    if (diff !== 0) {
+      return diff
+    }
+
+    return Date.parse(b.createdAt) - Date.parse(a.createdAt)
+  })
+
 export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   const supabase = useMemo(() => createClient(), [])
-  const [events, setEvents] = useState<Event[]>(initialEvents)
+  const [events, setEvents] = useState<Event[]>(() => sortEventsByStartDesc(initialEvents))
   const [showForm, setShowForm] = useState(false)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -46,7 +72,8 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
       console.error(insertResult.error)
       setErrorMessage("イベントの作成に失敗しました。入力内容を確認して再度お試しください。")
     } else if (insertResult.data) {
-      setEvents((prev) => [mapEventRowToEvent(insertResult.data as EventRow), ...prev])
+      const createdEvent = mapEventRowToEvent(insertResult.data as EventRow)
+      setEvents((prev) => sortEventsByStartDesc([...prev, createdEvent]))
       setShowForm(false)
     }
 
@@ -83,7 +110,9 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
       setErrorMessage("イベントの更新に失敗しました。時間を置いて再度お試しください。")
     } else if (updateResult.data) {
       const updatedEvent = mapEventRowToEvent(updateResult.data as EventRow)
-      setEvents((prev) => prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event)))
+      setEvents((prev) =>
+        sortEventsByStartDesc(prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))),
+      )
       setEditingEvent(null)
       setShowForm(false)
     }

@@ -29,6 +29,8 @@ export default async function EventsPage() {
   const { data: eventRows, error: eventsError } = await supabase
     .from("events")
     .select(EVENT_SELECT_COLUMNS)
+    .order("date", { ascending: false })
+    .order("time", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
 
   if (eventsError) {

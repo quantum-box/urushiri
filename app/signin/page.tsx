@@ -64,10 +64,12 @@ export default function SignInPage() {
               <span className="text-white font-bold text-xl">🍯</span>
             </div>
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-amber-700 to-yellow-600 bg-clip-text text-transparent">
-              HoneyMeet
+              ゆるしり
             </CardTitle>
           </div>
-          <CardDescription className="text-amber-600 text-lg font-medium">温かいコミュニティへようこそ</CardDescription>
+          <CardDescription className="text-amber-600 text-lg font-medium">
+            まえに会った人をゆるく知れる場所
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6 px-8">

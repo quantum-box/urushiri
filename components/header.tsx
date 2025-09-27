@@ -53,9 +53,9 @@ export function Header() {
           </div>
           <div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-700 to-yellow-600 bg-clip-text text-transparent">
-              HoneyMeet
+              ゆるしり
             </h1>
-            <p className="text-sm text-amber-600 font-medium">イベント共有プラットフォーム</p>
+            <p className="text-sm text-amber-600 font-medium">まえに会った人をゆるく知れるサービス</p>
           </div>
         </div>
 

@@ -58,13 +58,13 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
       <div className="flex items-center justify-between mb-12">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl">🎉</span>
+            <span className="text-white text-2xl">🤝</span>
           </div>
           <div>
             <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-800 to-yellow-700 bg-clip-text text-transparent mb-2">
-              みんなのイベント
+              つながりを見つけよう
             </h2>
-            <p className="text-amber-600 text-lg font-medium">楽しいイベントを見つけて、新しい仲間と出会おう！</p>
+            <p className="text-amber-600 text-lg font-medium">以前会った人との新しいつながりを発見しよう！</p>
           </div>
         </div>
         <Button
@@ -73,7 +73,7 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
           size="lg"
         >
           <Plus className="h-6 w-6" />
-          新しいイベントを作る
+          新しい集まりを作る
         </Button>
       </div>
 

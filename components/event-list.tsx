@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Trash2, MapPin, Clock, Users, Share2, Eye } from "lucide-react"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 import { ja } from "date-fns/locale"
 import { useRouter } from "next/navigation"
 
@@ -13,9 +13,10 @@ interface EventListProps {
   events: Event[]
   onEdit: (event: Event) => void
   onDelete: (id: string) => void
+  isProcessing?: boolean
 }
 
-export function EventList({ events, onEdit, onDelete }: EventListProps) {
+export function EventList({ events, onEdit, onDelete, isProcessing = false }: EventListProps) {
   const router = useRouter()
 
   const handleShare = (event: Event) => {
@@ -71,6 +72,7 @@ export function EventList({ events, onEdit, onDelete }: EventListProps) {
                   size="sm"
                   onClick={() => onEdit(event)}
                   className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                  disabled={isProcessing}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
@@ -79,6 +81,7 @@ export function EventList({ events, onEdit, onDelete }: EventListProps) {
                   size="sm"
                   onClick={() => onDelete(event.id)}
                   className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                  disabled={isProcessing}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -92,7 +95,7 @@ export function EventList({ events, onEdit, onDelete }: EventListProps) {
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Clock className="h-4 w-4" />
                 <span>
-                  {format(new Date(event.date), "yyyy年M月d日", { locale: ja })} {event.time}
+                  {format(parseISO(event.date), "yyyy年M月d日", { locale: ja })} {event.time}
                 </span>
               </div>
 

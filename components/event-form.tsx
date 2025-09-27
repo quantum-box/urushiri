@@ -15,8 +15,9 @@ import { X, Save } from "lucide-react"
 
 interface EventFormProps {
   event?: Event | null
-  onSubmit: (eventData: Omit<Event, "id" | "createdAt">) => void
+  onSubmit: (eventData: Omit<Event, "id" | "createdAt">) => Promise<void> | void
   onCancel: () => void
+  isSubmitting?: boolean
 }
 
 const categories = [
@@ -30,7 +31,7 @@ const categories = [
   "その他",
 ]
 
-export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
+export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: EventFormProps) {
   const [formData, setFormData] = useState({
     title: event?.title || "",
     description: event?.description || "",
@@ -43,9 +44,12 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
     isPublic: event?.isPublic ?? true,
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
+    if (isSubmitting) {
+      return
+    }
+    await onSubmit(formData)
   }
 
   const handleChange = (field: string, value: any) => {
@@ -76,6 +80,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
                 placeholder="イベント名を入力"
                 required
                 className="bg-input border-border text-foreground"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -84,7 +89,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
                 カテゴリー *
               </Label>
               <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
-                <SelectTrigger className="bg-input border-border text-foreground">
+                <SelectTrigger className="bg-input border-border text-foreground" disabled={isSubmitting}>
                   <SelectValue placeholder="カテゴリーを選択" />
                 </SelectTrigger>
                 <SelectContent>
@@ -109,6 +114,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
               placeholder="イベントの詳細を入力"
               rows={3}
               className="bg-input border-border text-foreground"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -124,6 +130,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
                 onChange={(e) => handleChange("date", e.target.value)}
                 required
                 className="bg-input border-border text-foreground"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -138,6 +145,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
                 onChange={(e) => handleChange("time", e.target.value)}
                 required
                 className="bg-input border-border text-foreground"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -152,6 +160,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
                 value={formData.maxAttendees}
                 onChange={(e) => handleChange("maxAttendees", Number.parseInt(e.target.value) || 0)}
                 className="bg-input border-border text-foreground"
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -167,6 +176,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
               placeholder="開催場所を入力"
               required
               className="bg-input border-border text-foreground"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -183,6 +193,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
                 value={formData.currentAttendees}
                 onChange={(e) => handleChange("currentAttendees", Number.parseInt(e.target.value) || 0)}
                 className="bg-input border-border text-foreground"
+                disabled={isSubmitting}
               />
             </div>
           )}
@@ -192,6 +203,7 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
               id="isPublic"
               checked={formData.isPublic}
               onCheckedChange={(checked) => handleChange("isPublic", checked)}
+              disabled={isSubmitting}
             />
             <Label htmlFor="isPublic" className="text-foreground">
               公開イベント
@@ -199,11 +211,11 @@ export function EventForm({ event, onSubmit, onCancel }: EventFormProps) {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1 flex items-center gap-2">
+            <Button type="submit" className="flex-1 flex items-center gap-2" disabled={isSubmitting}>
               <Save className="h-4 w-4" />
               {event ? "更新" : "作成"}
             </Button>
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
               キャンセル
             </Button>
           </div>

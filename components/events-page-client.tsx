@@ -179,7 +179,7 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
     <div className="mx-auto w-full max-w-5xl px-6 py-10">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-start gap-4">
-          <span className="mt-1 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+          <span className="mt-1 flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--info-bg)] text-[color:var(--info-foreground)]">
             <Calendar className="h-6 w-6" />
           </span>
           <div className="space-y-2">
@@ -223,7 +223,6 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
           onEdit={canManageEvents ? handleEditEvent : undefined}
           onDelete={canManageEvents ? handleDeleteEvent : undefined}
           isProcessing={isProcessing}
-          canManageEvents={canManageEvents}
         />
       )}
     </div>

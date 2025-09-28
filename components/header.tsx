@@ -47,7 +47,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border/80 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3 text-foreground transition-opacity hover:opacity-80">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-primary">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--info-bg)] text-[color:var(--info-foreground)]">
             <Calendar className="h-5 w-5" />
           </span>
           <span className="flex flex-col leading-tight">

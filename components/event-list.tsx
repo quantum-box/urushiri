@@ -77,7 +77,7 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false, canM
                 >
                   <Share2 className="h-4 w-4" />
                 </Button>
-                {canManageEvents && onEdit && onDelete && (
+                {onEdit && onDelete && (
                   <>
                     <Button
                       variant="ghost"
@@ -107,26 +107,26 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false, canM
 
             <div className="space-y-3 text-sm text-foreground">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-4 w-4 text-primary" />
+                <Clock className="h-4 w-4 text-[color:var(--secondary)]" />
                 <span>
                   {format(parseISO(event.date), "yyyy年M月d日", { locale: ja })} {event.time}
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary" />
+                <MapPin className="h-4 w-4 text-[color:var(--secondary)]" />
                 <span className="truncate">{event.location}</span>
               </div>
 
               <div className="flex items-center gap-3 text-muted-foreground">
-                <Users className="h-4 w-4 text-primary" />
+                <Users className="h-4 w-4 text-[color:var(--secondary)]" />
                 <span className="text-foreground">
                   {event.currentAttendees} / {event.maxAttendees} 人
                 </span>
               </div>
               <div className="h-2 w-full rounded-full bg-muted">
                 <div
-                  className="h-2 rounded-full bg-primary transition-all"
+                  className="h-2 rounded-full bg-[color:var(--secondary)] transition-all"
                   style={{
                     width: `${Math.min((event.currentAttendees / event.maxAttendees) * 100, 100)}%`,
                   }}

@@ -208,15 +208,15 @@ export function EventRegisterClient({ event, eventId, userId, existingRegistrati
               <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                 <Badge variant="secondary">{eventState.category}</Badge>
                 <span className="inline-flex items-center gap-1 text-foreground">
-                  <Calendar className="h-4 w-4 text-primary" />
+                  <Calendar className="h-4 w-4 text-[color:var(--secondary)]" />
                   {format(parseISO(eventState.date), "yyyy年M月d日（E）", { locale: ja })} {eventState.time}
                 </span>
                 <span className="inline-flex items-center gap-1 text-foreground">
-                  <MapPin className="h-4 w-4 text-primary" />
+                  <MapPin className="h-4 w-4 text-[color:var(--secondary)]" />
                   {eventState.location}
                 </span>
                 <span className="inline-flex items-center gap-1 text-foreground">
-                  <Users className="h-4 w-4 text-primary" />
+                  <Users className="h-4 w-4 text-[color:var(--secondary)]" />
                   定員 {eventState.maxAttendees} 名 / 残り {Math.max(eventState.maxAttendees - eventState.currentAttendees, 0)} 席
                 </span>
               </div>

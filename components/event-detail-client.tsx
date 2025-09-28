@@ -124,7 +124,7 @@ export function EventDetailClient({
                   variant="outline"
                   size="sm"
                   onClick={handleShare}
-                  className="rounded-full border-transparent bg-accent/40 text-primary hover:border-primary/40 hover:bg-accent"
+                  className="rounded-full border-transparent bg-[color:var(--info-bg)] text-[color:var(--info-foreground)] hover:border-[color:var(--secondary)] hover:bg-[color:var(--info-bg)]/80"
                 >
                   <Share2 className="mr-2 h-4 w-4" />
                   シェア
@@ -142,7 +142,7 @@ export function EventDetailClient({
                   <h3 className="text-base font-semibold text-foreground">開催情報</h3>
                   <div className="space-y-3 text-sm text-muted-foreground">
                     <div className="flex items-center gap-3">
-                      <Calendar className="h-5 w-5 text-primary" />
+                      <Calendar className="h-5 w-5 text-[color:var(--secondary)]" />
                       <div className="text-foreground">
                         <div className="font-medium">
                           {format(parseISO(event.date), "yyyy年M月d日（E）", { locale: ja })}
@@ -151,7 +151,7 @@ export function EventDetailClient({
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <MapPin className="h-5 w-5 text-primary" />
+                      <MapPin className="h-5 w-5 text-[color:var(--secondary)]" />
                       <div className="text-foreground">
                         <div className="font-medium">{event.location}</div>
                         <div className="text-xs text-muted-foreground">会場情報</div>
@@ -164,7 +164,7 @@ export function EventDetailClient({
                   <h3 className="text-base font-semibold text-foreground">参加状況</h3>
                   <div className="space-y-3 text-sm text-muted-foreground">
                     <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-primary" />
+                      <Users className="h-5 w-5 text-[color:var(--secondary)]" />
                       <div className="flex-1 text-foreground">
                         <div className="flex items-center justify-between">
                           <span className="font-medium">
@@ -174,7 +174,7 @@ export function EventDetailClient({
                         </div>
                         <div className="mt-2 h-2.5 w-full rounded-full bg-muted">
                           <div
-                            className="h-2.5 rounded-full bg-primary transition-all"
+                            className="h-2.5 rounded-full bg-[color:var(--secondary)] transition-all"
                             style={{ width: `${attendancePercentage}%` }}
                           />
                         </div>
@@ -264,7 +264,7 @@ export function EventDetailClient({
                 <Button
                   variant="outline"
                   size="lg"
-                  className="flex-1 min-w-[200px]"
+                  className="flex-1 min-w-[200px] border-transparent bg-[color:var(--info-bg)] text-[color:var(--info-foreground)] hover:border-[color:var(--secondary)] hover:bg-[color:var(--info-bg)]/80"
                   onClick={handleShare}
                 >
                   <Share2 className="mr-2 h-4 w-4" />

@@ -15,6 +15,7 @@ interface EventsPageClientProps {
   initialEvents: Event[]
   canManageEvents: boolean
   showAdminHint?: boolean
+  enableAiImageTools?: boolean
 }
 
 interface EventFormSubmission {
@@ -50,7 +51,12 @@ const sortEventsByStartDesc = (events: Event[]) =>
     return Date.parse(b.createdAt) - Date.parse(a.createdAt)
   })
 
-export function EventsPageClient({ initialEvents, canManageEvents, showAdminHint = false }: EventsPageClientProps) {
+export function EventsPageClient({
+  initialEvents,
+  canManageEvents,
+  showAdminHint = false,
+  enableAiImageTools = false,
+}: EventsPageClientProps) {
   const supabase = useMemo(() => createClient(), [])
   const [events, setEvents] = useState<Event[]>(() => sortEventsByStartDesc(initialEvents))
   const [showForm, setShowForm] = useState(false)
@@ -305,6 +311,7 @@ export function EventsPageClient({ initialEvents, canManageEvents, showAdminHint
           onSubmit={editingEvent ? handleUpdateEvent : handleCreateEvent}
           isSubmitting={isProcessing}
           onCancel={handleCancelForm}
+          enableAiImageTools={enableAiImageTools}
         />
       ) : (
         <EventList

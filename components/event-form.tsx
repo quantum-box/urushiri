@@ -25,6 +25,7 @@ interface EventFormProps {
   onSubmit: (submission: EventFormSubmission) => Promise<void> | void
   onCancel: () => void
   isSubmitting?: boolean
+  enableAiImageTools?: boolean
 }
 
 const categories = [
@@ -38,7 +39,13 @@ const categories = [
   "その他",
 ]
 
-export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: EventFormProps) {
+export function EventForm({
+  event,
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+  enableAiImageTools = false,
+}: EventFormProps) {
   const [formData, setFormData] = useState({
     title: event?.title || "",
     description: event?.description || "",
@@ -222,7 +229,7 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
 
     setSourceImageFile(file)
 
-    if (imageOnlyExtraction) {
+    if (enableAiImageTools && imageOnlyExtraction) {
       const transformed = await transformImageWithDify(file)
       if (transformed) {
         fileToUse = transformed
@@ -255,6 +262,10 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
 
   const handleImageOnlyExtractionChange = useCallback(
     async (checked: boolean) => {
+      if (!enableAiImageTools) {
+        return
+      }
+
       if (isTransformingImage) {
         return
       }
@@ -280,7 +291,7 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
         setRemoveImage(false)
       }
     },
-    [isTransformingImage, replacePreview, sourceImageFile, transformImageWithDify],
+    [enableAiImageTools, isTransformingImage, replacePreview, sourceImageFile, transformImageWithDify],
   )
 
   return (
@@ -388,23 +399,25 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                   画像を削除
                 </Button>
               )}
-              <label className="flex w-full cursor-pointer items-start gap-2 text-sm text-foreground md:max-w-[220px]">
-                <input
-                  type="checkbox"
-                  className="mt-0.5 h-4 w-4 cursor-pointer rounded border-input accent-primary"
-                  checked={imageOnlyExtraction}
-                  onChange={(event) => {
-                    void handleImageOnlyExtractionChange(event.target.checked)
-                  }}
-                  disabled={isSubmitting || isTransformingImage}
-                />
-                <span className="leading-tight">
-                  イメージのみ抽出する
-                  <span className="mt-1 block text-xs text-muted-foreground">
-                    文字を除去しテクスチャのみ生成します
+              {enableAiImageTools && (
+                <label className="flex w-full cursor-pointer items-start gap-2 text-sm text-foreground md:max-w-[220px]">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 cursor-pointer rounded border-input accent-primary"
+                    checked={imageOnlyExtraction}
+                    onChange={(event) => {
+                      void handleImageOnlyExtractionChange(event.target.checked)
+                    }}
+                    disabled={isSubmitting || isTransformingImage}
+                  />
+                  <span className="leading-tight">
+                    イメージのみ抽出する
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      文字を除去しテクスチャのみ生成します
+                    </span>
                   </span>
-                </span>
-              </label>
+                </label>
+              )}
             </div>
           </div>
 

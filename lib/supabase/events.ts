@@ -1,7 +1,7 @@
 import type { Event } from "@/app/page"
 
 export const EVENT_SELECT_COLUMNS =
-  "id, title, description, date, time, location, category, max_attendees, current_attendees, is_public, created_at"
+  "id, title, description, date, time, location, category, max_attendees, current_attendees, is_public, created_at, image_url"
 
 export type EventRow = {
   id: string
@@ -15,6 +15,7 @@ export type EventRow = {
   current_attendees: number | null
   is_public: boolean
   created_at: string
+  image_url: string | null
 }
 
 export const mapEventRowToEvent = (row: EventRow): Event => ({
@@ -29,4 +30,5 @@ export const mapEventRowToEvent = (row: EventRow): Event => ({
   currentAttendees: row.current_attendees ?? 0,
   isPublic: row.is_public,
   createdAt: row.created_at,
+  imageUrl: row.image_url ?? undefined,
 })

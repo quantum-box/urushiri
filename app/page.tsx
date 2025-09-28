@@ -15,6 +15,7 @@ export interface Event {
   currentAttendees: number
   isPublic: boolean
   createdAt: string
+  imageUrl?: string
 }
 
 export default async function EventsPage() {

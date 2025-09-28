@@ -15,6 +15,12 @@ interface EventsPageClientProps {
   canManageEvents: boolean
 }
 
+interface EventFormSubmission {
+  data: Omit<Event, "id" | "createdAt">
+  imageFile: File | null
+  removeImage: boolean
+}
+
 const buildEventTimestamp = (event: Event) => {
   if (!event.date) {
     return Number.NEGATIVE_INFINITY
@@ -56,13 +62,36 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
     }
   }, [canManageEvents])
 
-  const handleCreateEvent = async (eventData: Omit<Event, "id" | "createdAt">) => {
+  const handleCreateEvent = async ({ data: eventData, imageFile }: EventFormSubmission) => {
     if (!canManageEvents) {
       return
     }
 
     setIsProcessing(true)
     setErrorMessage(null)
+
+    let imageUrlToSave = eventData.imageUrl?.trim() ?? ""
+
+    if (imageFile) {
+      const extension = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpg"
+      const filePath = `events/${crypto.randomUUID()}.${extension}`
+      const uploadResult = await supabase.storage
+        .from("event-images")
+        .upload(filePath, imageFile, {
+          cacheControl: "3600",
+          upsert: true,
+        })
+
+      if (uploadResult.error) {
+        console.error(uploadResult.error)
+        setErrorMessage("画像のアップロードに失敗しました。時間を置いて再度お試しください。")
+        setIsProcessing(false)
+        return
+      }
+
+      const { data: publicUrlData } = supabase.storage.from("event-images").getPublicUrl(filePath)
+      imageUrlToSave = publicUrlData.publicUrl
+    }
 
     const insertResult = await supabase
       .from("events")
@@ -76,6 +105,7 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
         max_attendees: eventData.maxAttendees,
         current_attendees: 0,
         is_public: eventData.isPublic,
+        image_url: imageUrlToSave ? imageUrlToSave : null,
       })
       .select(EVENT_SELECT_COLUMNS)
       .single()
@@ -92,13 +122,46 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
     setIsProcessing(false)
   }
 
-  const handleUpdateEvent = async (eventData: Omit<Event, "id" | "createdAt">) => {
+  const getImagePathFromUrl = (url: string) => {
+    const marker = "/event-images/"
+    const index = url.indexOf(marker)
+    if (index === -1) {
+      return null
+    }
+    return url.slice(index + marker.length)
+  }
+
+  const handleUpdateEvent = async ({ data: eventData, imageFile, removeImage }: EventFormSubmission) => {
     if (!canManageEvents || !editingEvent) {
       return
     }
 
     setIsProcessing(true)
     setErrorMessage(null)
+
+    const previousImageUrl = editingEvent.imageUrl ?? ""
+    let imageUrlToSave = removeImage ? "" : eventData.imageUrl?.trim() ?? previousImageUrl
+
+    if (imageFile) {
+      const extension = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpg"
+      const filePath = `events/${editingEvent.id}-${Date.now()}.${extension}`
+      const uploadResult = await supabase.storage
+        .from("event-images")
+        .upload(filePath, imageFile, {
+          cacheControl: "3600",
+          upsert: true,
+        })
+
+      if (uploadResult.error) {
+        console.error(uploadResult.error)
+        setErrorMessage("画像のアップロードに失敗しました。時間を置いて再度お試しください。")
+        setIsProcessing(false)
+        return
+      }
+
+      const { data: publicUrlData } = supabase.storage.from("event-images").getPublicUrl(filePath)
+      imageUrlToSave = publicUrlData.publicUrl
+    }
 
     const updateResult = await supabase
       .from("events")
@@ -112,6 +175,7 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
         max_attendees: eventData.maxAttendees,
         current_attendees: eventData.currentAttendees,
         is_public: eventData.isPublic,
+        image_url: imageUrlToSave ? imageUrlToSave : null,
       })
       .eq("id", editingEvent.id)
       .select(EVENT_SELECT_COLUMNS)
@@ -121,6 +185,16 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
       console.error(updateResult.error)
       setErrorMessage("イベントの更新に失敗しました。時間を置いて再度お試しください。")
     } else if (updateResult.data) {
+      if ((imageFile || removeImage) && previousImageUrl && previousImageUrl !== imageUrlToSave) {
+        const previousPath = getImagePathFromUrl(previousImageUrl)
+        if (previousPath) {
+          const { error: removeError } = await supabase.storage.from("event-images").remove([previousPath])
+          if (removeError) {
+            console.error(removeError)
+          }
+        }
+      }
+
       const updatedEvent = mapEventRowToEvent(updateResult.data as EventRow)
       setEvents((prev) =>
         sortEventsByStartDesc(prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))),

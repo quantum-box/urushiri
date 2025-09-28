@@ -205,6 +205,16 @@ export function EventRegisterClient({ event, eventId, userId, existingRegistrati
         <div className="mx-auto max-w-3xl space-y-6">
           <Card className="border border-border/80 bg-white/95 shadow-none">
             <CardHeader className="space-y-4 pb-4">
+              {eventState.imageUrl && (
+                <div className="overflow-hidden rounded-[16px] border border-border/70">
+                  <img
+                    src={eventState.imageUrl}
+                    alt={`${eventState.title}のカバー画像`}
+                    className="h-56 w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
               <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                 <Badge variant="secondary">{eventState.category}</Badge>
                 <span className="inline-flex items-center gap-1 text-foreground">

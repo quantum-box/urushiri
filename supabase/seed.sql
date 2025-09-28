@@ -12,7 +12,8 @@ with event_seed as (
         'テクノロジー',
         500,
         234,
-        true
+        true,
+        null::text
       ),
       (
         '7ab2df7c-3d94-48dd-9e95-1f3d8f2fbc3d'::uuid,
@@ -24,7 +25,8 @@ with event_seed as (
         'デザイン',
         30,
         18,
-        true
+        true,
+        null::text
       ),
       (
         '9f6c1ae4-58cc-4f7f-986d-7fb4c9f7de12'::uuid,
@@ -36,7 +38,8 @@ with event_seed as (
         'ビジネス',
         150,
         72,
-        true
+        true,
+        null::text
       )
   ) as v (
     id,
@@ -48,7 +51,8 @@ with event_seed as (
     category,
     max_attendees,
     current_attendees,
-    is_public
+    is_public,
+    image_url
   )
 )
 insert into public.events (
@@ -61,7 +65,8 @@ insert into public.events (
   category,
   max_attendees,
   current_attendees,
-  is_public
+  is_public,
+  image_url
 )
 select
   id,
@@ -73,7 +78,8 @@ select
   category,
   max_attendees,
   current_attendees,
-  is_public
+  is_public,
+  image_url
 from event_seed
 on conflict (id) do update set
   title = excluded.title,
@@ -84,7 +90,8 @@ on conflict (id) do update set
   category = excluded.category,
   max_attendees = excluded.max_attendees,
   current_attendees = excluded.current_attendees,
-  is_public = excluded.is_public;
+  is_public = excluded.is_public,
+  image_url = coalesce(excluded.image_url, public.events.image_url);
 
 -- Seed data for event registrations (only inserts when target users exist)
 with registration_seed as (

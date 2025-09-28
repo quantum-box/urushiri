@@ -50,7 +50,17 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false, canM
           key={event.id}
           className="group border border-border/80 bg-white/95 transition-all hover:border-primary/40 hover:shadow-[0px_12px_30px_rgba(244,168,185,0.12)]"
         >
-          <CardHeader className="pb-2">
+          <CardHeader className="space-y-4 pb-2">
+            {event.imageUrl && (
+              <div className="overflow-hidden rounded-[12px] border border-border/60">
+                <img
+                  src={event.imageUrl}
+                  alt={`${event.title}のカバー画像`}
+                  className="h-40 w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            )}
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 space-y-3">
                 <Badge variant="secondary" className="w-fit">

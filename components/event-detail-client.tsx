@@ -106,6 +106,16 @@ export function EventDetailClient({
         <div className="space-y-6">
           <Card className="border border-border/80 bg-white/95 shadow-none">
             <CardHeader className="space-y-5 pb-0">
+              {event.imageUrl && (
+                <div className="overflow-hidden rounded-[16px] border border-border/70">
+                  <img
+                    src={event.imageUrl}
+                    alt={`${event.title}のカバー画像`}
+                    className="h-64 w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
               <div className="flex flex-wrap items-center gap-3 text-xs">
                 <Badge variant="secondary">{event.category}</Badge>
                 <Badge variant={event.isPublic ? "neutral" : "outline"}>

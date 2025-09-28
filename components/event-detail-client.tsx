@@ -10,33 +10,7 @@ import { format, parseISO } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
 import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
-
-const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
-  teens: "10代以下",
-  twenties: "20代",
-  thirties: "30代",
-  forties: "40代",
-  fifties: "50代",
-  sixtiesPlus: "60代以上",
-}
-
-const OCCUPATION_LABELS: Record<OccupationCategory, string> = {
-  student: "学生",
-  engineer: "エンジニア",
-  designer: "デザイナー",
-  planner: "企画・マーケティング",
-  manager: "マネジメント",
-  other: "その他",
-}
-
-const DISCOVERY_LABELS: Record<DiscoverySource, string> = {
-  sns: "SNS",
-  search: "インターネット検索",
-  friend: "友人・知人の紹介",
-  media: "メディア記事・ブログ",
-  eventSite: "イベント紹介サイト",
-  other: "その他",
-}
+import { AGE_GROUP_LABELS, OCCUPATION_LABELS, DISCOVERY_LABELS } from "@/lib/participant-labels"
 
 interface EventDetailClientProps {
   event: Event | null

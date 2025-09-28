@@ -44,7 +44,7 @@ export default async function EventsPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <EventsPageClient initialEvents={events} canManageEvents={Boolean(user)} />
+      <EventsPageClient initialEvents={events} canManageEvents={false} showAdminHint={Boolean(user)} />
     </div>
   )
 }

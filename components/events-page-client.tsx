@@ -9,10 +9,12 @@ import { Plus, Calendar } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { EVENT_SELECT_COLUMNS, mapEventRowToEvent, type EventRow } from "@/lib/supabase/events"
 import type { Event } from "@/app/page"
+import Link from "next/link"
 
 interface EventsPageClientProps {
   initialEvents: Event[]
   canManageEvents: boolean
+  showAdminHint?: boolean
 }
 
 const buildEventTimestamp = (event: Event) => {
@@ -41,7 +43,7 @@ const sortEventsByStartDesc = (events: Event[]) =>
     return Date.parse(b.createdAt) - Date.parse(a.createdAt)
   })
 
-export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageClientProps) {
+export function EventsPageClient({ initialEvents, canManageEvents, showAdminHint = false }: EventsPageClientProps) {
   const supabase = useMemo(() => createClient(), [])
   const [events, setEvents] = useState<Event[]>(() => sortEventsByStartDesc(initialEvents))
   const [showForm, setShowForm] = useState(false)
@@ -184,18 +186,24 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
           </span>
           <div className="space-y-2">
             <h2 className="text-[32px] font-semibold leading-tight text-foreground">イベント一覧</h2>
-            <p className="text-sm text-muted-foreground">開催予定のイベントを確認し、新規作成や内容の更新ができます。</p>
+            <p className="text-sm text-muted-foreground">
+              {canManageEvents
+                ? "開催予定のイベントを確認し、新規作成や内容の更新ができます。"
+                : "開催予定のイベントを確認できます。"}
+            </p>
           </div>
         </div>
-        <Button
-          onClick={() => canManageEvents && setShowForm(true)}
-          className="flex items-center gap-2"
-          size="lg"
-          disabled={isProcessing || !canManageEvents}
-        >
-          <Plus className="h-5 w-5" />
-          {canManageEvents ? "新しいイベント" : "ログインして作成"}
-        </Button>
+        {canManageEvents && (
+          <Button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2"
+            size="lg"
+            disabled={isProcessing}
+          >
+            <Plus className="h-5 w-5" />
+            新しいイベント
+          </Button>
+        )}
       </div>
 
       {errorMessage && (
@@ -204,9 +212,15 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
         </Alert>
       )}
 
-      {!canManageEvents && (
+      {!canManageEvents && showAdminHint && (
         <Alert className="mb-6" variant="info">
-          <AlertDescription>イベントの作成や編集にはログインが必要です。</AlertDescription>
+          <AlertDescription>
+            イベントの作成や編集は
+            <Link href="/admin/events" className="ml-1 font-medium text-[color:var(--info-foreground)] underline-offset-4 hover:underline">
+              管理画面
+            </Link>
+            から行えます。
+          </AlertDescription>
         </Alert>
       )}
 
@@ -223,6 +237,7 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
           onEdit={canManageEvents ? handleEditEvent : undefined}
           onDelete={canManageEvents ? handleDeleteEvent : undefined}
           isProcessing={isProcessing}
+          canManageEvents={canManageEvents}
         />
       )}
     </div>

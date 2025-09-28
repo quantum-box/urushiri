@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 import { Header } from "@/components/header"
 import { EventDetailClient } from "@/components/event-detail-client"
 import { EVENT_SELECT_COLUMNS, mapEventRowToEvent, type EventRow } from "@/lib/supabase/events"
-import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
+import type { AgeGroup, DiscoverySource, OccupationCategory } from "@/types/participant"
 import type { Event } from "@/app/page"
 import { AiSummaryContent, type EventRegistrationInsight } from "./ai-summary-content"
 import { AiSummarySkeleton } from "@/components/ai-summary-skeleton"
@@ -80,7 +80,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
   const isAuthenticated = Boolean(user)
 
-  let participants: EventParticipant[] = []
+  let sharedParticipantCount = 0
   let hasAppliedToEvent = false
 
   if (isAuthenticated && user) {
@@ -117,74 +117,23 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
         (participantRegistrationsQuery.data as EventRegistrationRow[] | null) ?? []
     }
 
-    const eventIdsForTitleLookup = new Set<string>([
-      eventRow.id,
-      ...participantRegistrations.map((registration) => registration.event_id),
-      ...Array.from(currentUserEventIdSet),
-    ])
+    const sharedParticipantIds = new Set<string>()
 
-    const eventTitleMap = new Map<string, string>()
-    eventTitleMap.set(eventRow.id, eventRow.title)
-
-    if (eventIdsForTitleLookup.size > 1) {
-      const idsToFetch = Array.from(eventIdsForTitleLookup).filter((eventId) => !eventTitleMap.has(eventId))
-
-      if (idsToFetch.length > 0) {
-        const { data: relatedEvents, error: relatedEventsError } = await supabase
-          .from("events")
-          .select("id, title")
-          .in("id", idsToFetch)
-
-        if (relatedEventsError) {
-          console.error(relatedEventsError)
-        }
-
-        for (const relatedEvent of relatedEvents ?? []) {
-          eventTitleMap.set(relatedEvent.id, relatedEvent.title)
-        }
-      }
-    }
-
-    participants = participantRows.reduce<EventParticipant[]>((acc, registration) => {
+    for (const registration of participantRows) {
       const userEventIds = participantRegistrations
         .filter((participantRegistration) => participantRegistration.user_id === registration.user_id)
         .map((participantRegistration) => participantRegistration.event_id)
 
-      const sharedEventIds = currentUserEventIdSet.size
-        ? Array.from(new Set(userEventIds.filter((eventId) => currentUserEventIdSet.has(eventId))))
+      const hasSharedEvent = currentUserEventIdSet.size
+        ? userEventIds.some((eventId) => currentUserEventIdSet.has(eventId))
         : userEventIds.includes(params.id)
-          ? [params.id]
-          : []
 
-      if (!sharedEventIds.length) {
-        return acc
+      if (hasSharedEvent) {
+        sharedParticipantIds.add(registration.user_id)
       }
+    }
 
-      const sharedEventTitles = sharedEventIds
-        .map((eventId) => eventTitleMap.get(eventId))
-        .filter((title): title is string => Boolean(title))
-
-      if (!sharedEventTitles.length) {
-        return acc
-      }
-
-      const { age_group: ageGroup, occupation, discovery } = registration
-
-      if (!ageGroup || !occupation || !discovery) {
-        return acc
-      }
-
-      acc.push({
-        id: registration.user_id,
-        ageGroup,
-        occupation,
-        discovery,
-        sharedEventTitles,
-        other: registration.other ?? undefined,
-      })
-
-      return acc
-    }, [])
+    sharedParticipantCount = sharedParticipantIds.size
 
     hasAppliedToEvent = currentUserEventIdSet.has(params.id)
   }
@@ -195,7 +144,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
       <EventDetailClient
         event={event}
         eventId={params.id}
-        participants={participants}
+        sharedParticipantCount={sharedParticipantCount}
         hasAppliedToEvent={hasAppliedToEvent}
         isAuthenticated={isAuthenticated}
         aiSummarySection={

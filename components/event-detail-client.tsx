@@ -9,13 +9,11 @@ import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-
 import { format, parseISO } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
-import type { AgeGroup, DiscoverySource, EventParticipant, OccupationCategory } from "@/types/participant"
-import { AGE_GROUP_LABELS, OCCUPATION_LABELS, DISCOVERY_LABELS } from "@/lib/participant-labels"
 
 interface EventDetailClientProps {
   event: Event | null
   eventId: string
-  participants: EventParticipant[]
+  sharedParticipantCount: number
   hasAppliedToEvent: boolean
   isAuthenticated: boolean
   aiSummarySection?: ReactNode
@@ -24,7 +22,7 @@ interface EventDetailClientProps {
 export function EventDetailClient({
   event,
   eventId,
-  participants,
+  sharedParticipantCount,
   hasAppliedToEvent,
   isAuthenticated,
   aiSummarySection,
@@ -56,7 +54,6 @@ export function EventDetailClient({
   }
 
   const attendancePercentage = event ? Math.min((event.currentAttendees / event.maxAttendees) * 100, 100) : 0
-  const participantCount = participants.length
 
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-10">
@@ -178,56 +175,24 @@ export function EventDetailClient({
               )}
 
               <section className="space-y-5 rounded-[12px] border border-border/70 bg-muted/30 p-5">
-                <div className="space-y-1">
+                <div>
                   <h3 className="text-base font-semibold text-foreground">共通イベント参加者</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {isAuthenticated
-                      ? `あなたと共通の参加履歴があるユーザー: ${participantCount} 名`
-                      : "ログインすると共通の参加履歴を閲覧できます。"}
-                  </p>
                 </div>
 
                 {!isAuthenticated ? (
                   <p className="text-sm text-muted-foreground">
-                    ログインすると、共通の参加履歴があるユーザーの詳細が表示されます。
+                    ログインすると共通の参加履歴を閲覧できます。
                   </p>
-                ) : participantCount === 0 ? (
+                ) : sharedParticipantCount === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     {hasAppliedToEvent
                       ? "あなたと共通の参加履歴があるユーザーはまだ見つかりません。"
                       : "このイベントに申し込むと、共通の参加履歴があるユーザーが表示されます。"}
                   </p>
                 ) : (
-                  <ul className="space-y-3">
-                    {participants.map((participant) => (
-                      <li
-                        key={participant.id}
-                        className="rounded-[12px] border border-border/60 bg-white/90 p-4"
-                      >
-                        <div className="flex flex-col gap-2 text-sm text-foreground">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {AGE_GROUP_LABELS[participant.ageGroup]}
-                            </Badge>
-                            <Badge variant="neutral" className="text-xs">
-                              {OCCUPATION_LABELS[participant.occupation]}
-                            </Badge>
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            認知経路: {DISCOVERY_LABELS[participant.discovery]}
-                          </div>
-                          {participant.sharedEventTitles.length > 0 && (
-                            <div className="text-xs text-muted-foreground">
-                              共通参加イベント: {participant.sharedEventTitles.join(" / ")}
-                            </div>
-                          )}
-                          {participant.other && (
-                            <p className="text-sm text-muted-foreground">その他: {participant.other}</p>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    共通の参加履歴があるユーザーが {sharedParticipantCount} 名見つかりました。
+                  </p>
                 )}
               </section>
 

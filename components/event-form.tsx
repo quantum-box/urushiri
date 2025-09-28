@@ -295,8 +295,8 @@ export function EventForm({
   )
 
   return (
-    <Card className="mx-auto max-w-3xl border border-border/80 bg-white/95 shadow-none">
-      <CardHeader className="flex flex-row items-center justify-between pb-4">
+    <Card className="mx-auto w-full max-w-3xl border border-border/80 bg-white/95 shadow-none">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 pb-4">
         <CardTitle className="text-2xl font-semibold text-card-foreground">
           {event ? "イベントを編集" : "新しいイベントを作成"}
         </CardTitle>
@@ -304,7 +304,7 @@ export function EventForm({
           <X className="h-4 w-4" />
         </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 py-6 sm:px-6 sm:py-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
@@ -359,7 +359,7 @@ export function EventForm({
               カバー画像（任意）
             </Label>
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-5">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
                 {previewUrl ? (
                   <img src={previewUrl} alt="イベント画像プレビュー" className="h-24 w-24 rounded-lg object-cover" />
                 ) : formData.imageUrl ? (
@@ -373,7 +373,7 @@ export function EventForm({
                     画像なし
                   </div>
                 )}
-                <div className="flex flex-col gap-2 text-xs text-muted-foreground">
+                <div className="flex w-full flex-col gap-2 text-xs text-muted-foreground sm:w-auto">
                   <Input
                     key={imageInputKey}
                     id="eventImage"
@@ -394,7 +394,7 @@ export function EventForm({
                   variant="outline"
                   onClick={handleRemoveImage}
                   disabled={isSubmitting || isTransformingImage}
-                  className="max-w-[160px]"
+                  className="w-full max-w-[240px] sm:max-w-[160px]"
                 >
                   画像を削除
                 </Button>
@@ -508,10 +508,10 @@ export function EventForm({
             </Label>
           </div>
 
-          <div className="flex flex-wrap gap-3 pt-4">
+          <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:flex-wrap">
             <Button
               type="submit"
-              className="flex-1 min-w-[160px] items-center gap-2"
+              className="w-full items-center gap-2 sm:flex-1"
               disabled={isSubmitting || isTransformingImage}
             >
               <Save className="h-4 w-4" />
@@ -522,7 +522,7 @@ export function EventForm({
               variant="outline"
               onClick={onCancel}
               disabled={isSubmitting || isTransformingImage}
-              className="flex-1 min-w-[160px]"
+              className="w-full sm:flex-1"
             >
               キャンセル
             </Button>

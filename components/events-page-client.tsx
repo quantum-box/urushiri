@@ -259,14 +259,14 @@ export function EventsPageClient({
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10">
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-6">
-        <div className="flex items-start gap-4">
-          <span className="mt-1 flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--info-bg)] text-[color:var(--info-foreground)]">
+    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4 sm:items-start">
+          <span className="mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[color:var(--info-bg)] text-[color:var(--info-foreground)]">
             <Calendar className="h-6 w-6" />
           </span>
           <div className="space-y-2">
-            <h2 className="text-[32px] font-semibold leading-tight text-foreground">イベント一覧</h2>
+            <h2 className="text-2xl font-semibold leading-tight text-foreground sm:text-[32px]">イベント一覧</h2>
             <p className="text-sm text-muted-foreground">
               {canManageEvents
                 ? "開催予定のイベントを確認し、新規作成や内容の更新ができます。"
@@ -279,7 +279,7 @@ export function EventsPageClient({
           canManageEvents ? (
             <Button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2"
+              className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start"
               size="lg"
               disabled={isProcessing}
             >
@@ -287,7 +287,7 @@ export function EventsPageClient({
               イベントを作成
             </Button>
           ) : (
-            <Button asChild className="flex items-center gap-2" size="lg">
+            <Button asChild className="flex w-full items-center justify-center gap-2 sm:w-auto" size="lg">
               <Link href="/signin">
                 <Plus className="h-5 w-5" />
                 ログインして作成

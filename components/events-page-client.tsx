@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { EventList } from "@/components/event-list"
 import { EventForm } from "@/components/event-form"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ import type { Event } from "@/app/page"
 
 interface EventsPageClientProps {
   initialEvents: Event[]
+  canManageEvents: boolean
 }
 
 const buildEventTimestamp = (event: Event) => {
@@ -40,7 +41,7 @@ const sortEventsByStartDesc = (events: Event[]) =>
     return Date.parse(b.createdAt) - Date.parse(a.createdAt)
   })
 
-export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
+export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageClientProps) {
   const supabase = useMemo(() => createClient(), [])
   const [events, setEvents] = useState<Event[]>(() => sortEventsByStartDesc(initialEvents))
   const [showForm, setShowForm] = useState(false)
@@ -48,7 +49,18 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (!canManageEvents) {
+      setShowForm(false)
+      setEditingEvent(null)
+    }
+  }, [canManageEvents])
+
   const handleCreateEvent = async (eventData: Omit<Event, "id" | "createdAt">) => {
+    if (!canManageEvents) {
+      return
+    }
+
     setIsProcessing(true)
     setErrorMessage(null)
 
@@ -81,7 +93,7 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   }
 
   const handleUpdateEvent = async (eventData: Omit<Event, "id" | "createdAt">) => {
-    if (!editingEvent) {
+    if (!canManageEvents || !editingEvent) {
       return
     }
 
@@ -121,6 +133,10 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   }
 
   const handleDeleteEvent = async (id: string) => {
+    if (!canManageEvents) {
+      return
+    }
+
     const confirmed = window.confirm("このイベントを削除しますか？")
     if (!confirmed) {
       return
@@ -146,6 +162,10 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   }
 
   const handleEditEvent = (event: Event) => {
+    if (!canManageEvents) {
+      return
+    }
+
     setEditingEvent(event)
     setShowForm(true)
   }
@@ -156,18 +176,25 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <Calendar className="h-8 w-8 text-primary" />
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">イベント一覧</h2>
-            <p className="text-muted-foreground">イベントの作成、編集、削除ができます</p>
+    <div className="mx-auto w-full max-w-5xl px-6 py-10">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <span className="mt-1 flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--info-bg)] text-[color:var(--info-foreground)]">
+            <Calendar className="h-6 w-6" />
+          </span>
+          <div className="space-y-2">
+            <h2 className="text-[32px] font-semibold leading-tight text-foreground">イベント一覧</h2>
+            <p className="text-sm text-muted-foreground">開催予定のイベントを確認し、新規作成や内容の更新ができます。</p>
           </div>
         </div>
-        <Button onClick={() => setShowForm(true)} className="flex items-center gap-2" size="lg" disabled={isProcessing}>
+        <Button
+          onClick={() => canManageEvents && setShowForm(true)}
+          className="flex items-center gap-2"
+          size="lg"
+          disabled={isProcessing || !canManageEvents}
+        >
           <Plus className="h-5 w-5" />
-          新しいイベント
+          {canManageEvents ? "新しいイベント" : "ログインして作成"}
         </Button>
       </div>
 
@@ -177,7 +204,13 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
         </Alert>
       )}
 
-      {showForm ? (
+      {!canManageEvents && (
+        <Alert className="mb-6" variant="info">
+          <AlertDescription>イベントの作成や編集にはログインが必要です。</AlertDescription>
+        </Alert>
+      )}
+
+      {showForm && canManageEvents ? (
         <EventForm
           event={editingEvent}
           onSubmit={editingEvent ? handleUpdateEvent : handleCreateEvent}
@@ -185,7 +218,12 @@ export function EventsPageClient({ initialEvents }: EventsPageClientProps) {
           onCancel={handleCancelForm}
         />
       ) : (
-        <EventList events={events} onEdit={handleEditEvent} onDelete={handleDeleteEvent} isProcessing={isProcessing} />
+        <EventList
+          events={events}
+          onEdit={canManageEvents ? handleEditEvent : undefined}
+          onDelete={canManageEvents ? handleDeleteEvent : undefined}
+          isProcessing={isProcessing}
+        />
       )}
     </div>
   )

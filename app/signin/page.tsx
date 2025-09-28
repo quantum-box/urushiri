@@ -50,14 +50,18 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Calendar className="h-6 w-6 text-primary" />
-            <CardTitle className="text-2xl">イベント管理システム</CardTitle>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+      <Card className="w-full max-w-md border border-border/80 bg-white/95 shadow-none">
+        <CardHeader className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
+            <Calendar className="h-6 w-6" />
           </div>
-          <CardDescription>アカウントにサインインしてください</CardDescription>
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-semibold text-foreground">ゆるしりへサインイン</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              登録済みのメールアドレスとパスワードを入力してください。
+            </CardDescription>
+          </div>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -90,7 +94,7 @@ export default function SignInPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

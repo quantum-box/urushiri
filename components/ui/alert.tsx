@@ -4,13 +4,19 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const alertVariants = cva(
-  'relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
+  'relative grid w-full items-start gap-y-1 rounded-[12px] border px-4 py-4 text-sm leading-relaxed has-[>svg]:grid-cols-[40px_1fr] has-[>svg]:gap-x-3 [&>svg]:size-5 [&>svg]:translate-y-0.5 [&>svg]:text-current',
   {
     variants: {
       variant: {
-        default: 'bg-card text-card-foreground',
+        default: 'border-border bg-card text-card-foreground [&>svg]:text-muted-foreground',
         destructive:
-          'text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90',
+          'border-[#f3bcbc] bg-[#fff0f0] text-[#b15252] [&>svg]:text-[#d96f6f] *:data-[slot=alert-description]:text-[#b15252]',
+        success:
+          'border-[#b9dbb9] bg-[var(--success-bg)] text-[var(--success-foreground)] [&>svg]:text-[var(--success-foreground)]',
+        info:
+          'border-[#b7d4e0] bg-[var(--info-bg)] text-[var(--info-foreground)] [&>svg]:text-[var(--info-foreground)]',
+        warning:
+          'border-[#f0dcaa] bg-[var(--warning-bg)] text-[var(--warning-foreground)] [&>svg]:text-[var(--warning-foreground)]',
       },
     },
     defaultVariants: {
@@ -54,10 +60,7 @@ function AlertDescription({
   return (
     <div
       data-slot="alert-description"
-      className={cn(
-        'text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed',
-        className,
-      )}
+      className={cn('col-start-2 grid justify-items-start gap-1 text-sm text-inherit [&_p]:leading-relaxed', className)}
       {...props}
     />
   )

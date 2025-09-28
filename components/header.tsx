@@ -41,8 +41,6 @@ export function Header() {
     router.push("/signin")
   }
 
-  if (!user) return null
-
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
@@ -56,29 +54,40 @@ export function Header() {
           </span>
         </Link>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="group flex items-center gap-3 rounded-full bg-white/60 px-3 py-1.5 text-sm font-medium text-foreground/80 shadow-none transition-all hover:bg-white hover:text-foreground"
-            >
-              <Avatar className="h-9 w-9">
-                <AvatarFallback>{user.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
-              </Avatar>
-              <span className="hidden sm:inline max-w-[200px] truncate">{user.email}</span>
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="group flex items-center gap-3 rounded-full bg-white/60 px-3 py-1.5 text-sm font-medium text-foreground/80 shadow-none transition-all hover:bg-white hover:text-foreground"
+              >
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback>{user.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                </Avatar>
+                <span className="hidden sm:inline max-w-[200px] truncate">{user.email}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem disabled className="text-muted-foreground">
+                <User className="mr-2 h-4 w-4" />
+                {user.email}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                ログアウト
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" asChild>
+              <Link href="/signin">サインイン</Link>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem disabled className="text-muted-foreground">
-              <User className="mr-2 h-4 w-4" />
-              {user.email}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              ログアウト
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <Button asChild>
+              <Link href="/signup">サインアップ</Link>
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   )

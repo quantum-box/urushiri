@@ -212,17 +212,7 @@ export function EventsPageClient({ initialEvents, canManageEvents, showAdminHint
         </Alert>
       )}
 
-      {!canManageEvents && showAdminHint && (
-        <Alert className="mb-6" variant="info">
-          <AlertDescription>
-            イベントの作成や編集は
-            <Link href="/admin/events" className="ml-1 font-medium text-[color:var(--info-foreground)] underline-offset-4 hover:underline">
-              管理画面
-            </Link>
-            から行えます。
-          </AlertDescription>
-        </Alert>
-      )}
+      {!canManageEvents && showAdminHint && null}
 
       {showForm && canManageEvents ? (
         <EventForm

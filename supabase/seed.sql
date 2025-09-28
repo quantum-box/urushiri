@@ -127,6 +127,90 @@ with registration_seed as (
     '投資家として候補を探しています。'::text as other
   from auth.users u
   where u.email = 'takanori.fukuyama+1@quantum-box.com'
+
+  union all
+
+  select
+    '10ce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
+    '0d3f4a9f-7b5a-4a83-8b30-9d9b2a19a0b1'::uuid as event_id,
+    u.id as user_id,
+    '福山 貴也'::text as name,
+    'teens'::text as age_group,
+    'student'::text as occupation,
+    'sns'::text as discovery,
+    '1回目の参加です'::text as other
+  from auth.users u
+  where u.email = 'takanori.fukuyama+1@quantum-box.com'
+
+  union all
+
+  select
+    '11ce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
+    '7ab2df7c-3d94-48dd-9e95-1f3d8f2fbc3d'::uuid as event_id,
+    u.id as user_id,
+    '福山 貴也'::text as name,
+    'twenties'::text as age_group,
+    'engineer'::text as occupation,
+    'search'::text as discovery,
+    '2回目の参加です'::text as other
+  from auth.users u
+  where u.email = 'takanori.fukuyama+1@quantum-box.com'
+
+  union all
+
+  select
+    '12ce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
+    '9f6c1ae4-58cc-4f7f-986d-7fb4c9f7de12'::uuid as event_id,
+    u.id as user_id,
+    '福山 貴也'::text as name,
+    'thirties'::text as age_group,
+    'designer'::text as occupation,
+    'friend'::text as discovery,
+    '3回目の参加です'::text as other
+  from auth.users u
+  where u.email = 'takanori.fukuyama+1@quantum-box.com'
+
+  union all
+
+  select
+    '13ce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
+    '0d3f4a9f-7b5a-4a83-8b30-9d9b2a19a0b1'::uuid as event_id,
+    u.id as user_id,
+    '川村 美織'::text as name,
+    'forties'::text as age_group,
+    'planner'::text as occupation,
+    'media'::text as discovery,
+    '4回目の参加です'::text as other
+  from auth.users u
+  where u.email = 'miomio.pooh.1224@gmail.com'
+
+  union all
+
+  select
+    '14ce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
+    '7ab2df7c-3d94-48dd-9e95-1f3d8f2fbc3d'::uuid as event_id,
+    u.id as user_id,
+    '川村 美織'::text as name,
+    'fifties'::text as age_group,
+    'manager'::text as occupation,
+    'eventSite'::text as discovery,
+    '5回目の参加です'::text as other
+  from auth.users u
+  where u.email = 'miomio.pooh.1224@gmail.com'
+
+  union all
+
+  select
+    '15ce2d5e-9fa4-4d09-a6b2-d31b4d4ea22c'::uuid as id,
+    '9f6c1ae4-58cc-4f7f-986d-7fb4c9f7de12'::uuid as event_id,
+    u.id as user_id,
+    '川村 美織'::text as name,
+    'sixtiesPlus'::text as age_group,
+    'other'::text as occupation,
+    'other'::text as discovery,
+    '6回目の参加です'::text as other
+  from auth.users u
+  where u.email = 'miomio.pooh.1224@gmail.com'
 )
 insert into public.event_registrations (
   id,

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useEffect, useState, type ChangeEvent } from "react"
+import { useCallback, useEffect, useState, type ChangeEvent } from "react"
 import type { Event } from "@/app/page"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ interface EventFormSubmission {
   data: Omit<Event, "id" | "createdAt">
   imageFile: File | null
   removeImage: boolean
+  imageOnlyExtraction: boolean
 }
 
 interface EventFormProps {
@@ -51,9 +52,21 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
     imageUrl: event?.imageUrl || "",
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [sourceImageFile, setSourceImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState(event?.imageUrl || "")
   const [removeImage, setRemoveImage] = useState(false)
   const [imageInputKey, setImageInputKey] = useState(0)
+  const [imageOnlyExtraction, setImageOnlyExtraction] = useState(false)
+  const [isTransformingImage, setIsTransformingImage] = useState(false)
+
+  const replacePreview = useCallback((nextPreviewUrl: string) => {
+    setPreviewUrl((prev) => {
+      if (prev && prev.startsWith("blob:")) {
+        URL.revokeObjectURL(prev)
+      }
+      return nextPreviewUrl
+    })
+  }, [])
 
   useEffect(() => {
     setFormData({
@@ -70,14 +83,12 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
     })
     setRemoveImage(false)
     setImageFile(null)
+    setSourceImageFile(null)
     setImageInputKey((prev) => prev + 1)
-    setPreviewUrl((prev) => {
-      if (prev && prev.startsWith("blob:")) {
-        URL.revokeObjectURL(prev)
-      }
-      return event?.imageUrl || ""
-    })
-  }, [event])
+    setImageOnlyExtraction(false)
+    replacePreview(event?.imageUrl || "")
+    setIsTransformingImage(false)
+  }, [event, replacePreview])
 
   useEffect(() => {
     return () => {
@@ -87,9 +98,85 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
     }
   }, [previewUrl])
 
+  const convertBase64ToFile = useCallback((base64: string, mimeType: string, baseName: string): File => {
+    const binary = atob(base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i += 1) {
+      bytes[i] = binary.charCodeAt(i)
+    }
+    const blob = new Blob([bytes], { type: mimeType })
+    return new File([blob], `${baseName}.${mimeType.split("/").pop() ?? "png"}`, { type: mimeType })
+  }, [])
+
+  const transformImageWithDify = useCallback(
+    async (file: File): Promise<File | null> => {
+      setIsTransformingImage(true)
+      try {
+        const formData = new FormData()
+        formData.append("image", file)
+        formData.append("fileName", file.name)
+
+        const response = await fetch("/api/dify/image-generation", {
+          method: "POST",
+          body: formData,
+        })
+
+        if (!response.ok) {
+          let errorMessage = "画像の変換に失敗しました"
+          try {
+            const errorPayload = (await response.json()) as { error?: unknown }
+            if (errorPayload && typeof errorPayload.error === "string" && errorPayload.error.trim().length > 0) {
+              errorMessage = errorPayload.error
+            }
+            console.error("Dify image generation API error", errorPayload)
+          } catch (parseError) {
+            console.error("Failed to parse image generation error response", parseError)
+          }
+          throw new Error(errorMessage)
+        }
+
+        const result: {
+          imageBase64: string | null
+          imageUrl: string | null
+          mimeType: string | null
+        } = await response.json()
+
+        if (result.imageBase64) {
+          const mimeType = result.mimeType && result.mimeType.trim().length > 0 ? result.mimeType : "image/png"
+          const baseName = file.name.replace(/\.[^.]+$/, "-texture")
+          return convertBase64ToFile(result.imageBase64, mimeType, baseName)
+        }
+
+        if (result.imageUrl) {
+          const fetched = await fetch(result.imageUrl)
+          if (!fetched.ok) {
+            throw new Error("生成画像の取得に失敗しました")
+          }
+          const blob = await fetched.blob()
+          const extension = blob.type.split("/").pop() ?? "png"
+          const baseName = file.name.replace(/\.[^.]+$/, "-texture")
+          return new File([blob], `${baseName}.${extension}`, { type: blob.type })
+        }
+
+        console.error("Dify image generation response did not contain image data", result)
+        throw new Error("生成結果に画像がありません")
+      } catch (error) {
+        console.error(error)
+        const userMessage = error instanceof Error && error.message.trim().length > 0
+          ? error.message
+          : "画像から文字のみを除去する処理に失敗しました。"
+        window.alert(`${userMessage}\n元の画像をそのまま使用します。`)
+        return null
+      } finally {
+        setIsTransformingImage(false)
+      }
+    },
+    [convertBase64ToFile],
+  )
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (isSubmitting) {
+    if (isSubmitting || isTransformingImage) {
       return
     }
     await onSubmit({
@@ -99,6 +186,7 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
       },
       imageFile,
       removeImage,
+      imageOnlyExtraction,
     })
   }
 
@@ -106,8 +194,8 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isSubmitting) {
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (isSubmitting || isTransformingImage) {
       return
     }
 
@@ -130,31 +218,70 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
       return
     }
 
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl)
+    let fileToUse: File | null = file
+
+    setSourceImageFile(file)
+
+    if (imageOnlyExtraction) {
+      const transformed = await transformImageWithDify(file)
+      if (transformed) {
+        fileToUse = transformed
+      } else {
+        setImageOnlyExtraction(false)
+      }
     }
 
-    const objectUrl = URL.createObjectURL(file)
-    setImageFile(file)
-    setPreviewUrl(objectUrl)
-    setRemoveImage(false)
+    if (fileToUse) {
+      setImageFile(fileToUse)
+      replacePreview(URL.createObjectURL(fileToUse))
+      setRemoveImage(false)
+    }
   }
 
   const handleRemoveImage = () => {
-    if (isSubmitting) {
+    if (isSubmitting || isTransformingImage) {
       return
     }
 
-    if (previewUrl && previewUrl.startsWith("blob:")) {
-      URL.revokeObjectURL(previewUrl)
-    }
-
     setImageFile(null)
-    setPreviewUrl("")
+    setSourceImageFile(null)
+    replacePreview("")
     setRemoveImage(true)
     setFormData((prev) => ({ ...prev, imageUrl: "" }))
     setImageInputKey((prev) => prev + 1)
+    setIsTransformingImage(false)
+    setImageOnlyExtraction(false)
   }
+
+  const handleImageOnlyExtractionChange = useCallback(
+    async (checked: boolean) => {
+      if (isTransformingImage) {
+        return
+      }
+
+      setImageOnlyExtraction(checked)
+
+      if (!sourceImageFile) {
+        return
+      }
+
+      if (checked) {
+        const transformed = await transformImageWithDify(sourceImageFile)
+        if (transformed) {
+          setImageFile(transformed)
+          replacePreview(URL.createObjectURL(transformed))
+          setRemoveImage(false)
+        } else {
+          setImageOnlyExtraction(false)
+        }
+      } else {
+        setImageFile(sourceImageFile)
+        replacePreview(URL.createObjectURL(sourceImageFile))
+        setRemoveImage(false)
+      }
+    },
+    [isTransformingImage, replacePreview, sourceImageFile, transformImageWithDify],
+  )
 
   return (
     <Card className="mx-auto max-w-3xl border border-border/80 bg-white/95 shadow-none">
@@ -220,7 +347,7 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
             <Label htmlFor="eventImage" className="text-foreground">
               カバー画像（任意）
             </Label>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-5">
               <div className="flex items-center gap-3">
                 {previewUrl ? (
                   <img src={previewUrl} alt="イベント画像プレビュー" className="h-24 w-24 rounded-lg object-cover" />
@@ -241,10 +368,13 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                     id="eventImage"
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    onChange={handleImageChange}
-                    disabled={isSubmitting}
+                    onChange={(event) => {
+                      void handleImageChange(event)
+                    }}
+                    disabled={isSubmitting || isTransformingImage}
                   />
                   <span>対応形式: JPEG / PNG / WebP（最大5MB）</span>
+                  {isTransformingImage && <span className="text-primary">テクスチャ変換中...</span>}
                 </div>
               </div>
               {(previewUrl || formData.imageUrl) && (
@@ -252,12 +382,29 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
                   type="button"
                   variant="outline"
                   onClick={handleRemoveImage}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isTransformingImage}
                   className="max-w-[160px]"
                 >
                   画像を削除
                 </Button>
               )}
+              <label className="flex w-full cursor-pointer items-start gap-2 text-sm text-foreground md:max-w-[220px]">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-4 w-4 cursor-pointer rounded border-input accent-primary"
+                  checked={imageOnlyExtraction}
+                  onChange={(event) => {
+                    void handleImageOnlyExtractionChange(event.target.checked)
+                  }}
+                  disabled={isSubmitting || isTransformingImage}
+                />
+                <span className="leading-tight">
+                  イメージのみ抽出する
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    文字を除去しテクスチャのみ生成します
+                  </span>
+                </span>
+              </label>
             </div>
           </div>
 
@@ -349,7 +496,11 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
           </div>
 
           <div className="flex flex-wrap gap-3 pt-4">
-            <Button type="submit" className="flex-1 min-w-[160px] items-center gap-2" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="flex-1 min-w-[160px] items-center gap-2"
+              disabled={isSubmitting || isTransformingImage}
+            >
               <Save className="h-4 w-4" />
               {event ? "更新" : "作成"}
             </Button>
@@ -357,7 +508,7 @@ export function EventForm({ event, onSubmit, onCancel, isSubmitting = false }: E
               type="button"
               variant="outline"
               onClick={onCancel}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isTransformingImage}
               className="flex-1 min-w-[160px]"
             >
               キャンセル

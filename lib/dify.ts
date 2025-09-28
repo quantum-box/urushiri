@@ -1,10 +1,17 @@
 import "server-only"
+import { Buffer } from "node:buffer"
 
-export interface DifyFilePayload {
-  type: string
-  transfer_method: string
-  [key: string]: unknown
-}
+export type DifyFilePayload =
+  | {
+      type: string
+      transfer_method: "remote_url"
+      url: string
+    }
+  | {
+      type: string
+      transfer_method: "local_file"
+      upload_file_id: string
+    }
 
 export interface SendDifyChatMessageParams {
   query: string
@@ -23,6 +30,18 @@ const DIFY_API_BASE_URL = process.env.DIFY_API_BASE_URL ?? "https://api.dify.ai"
 const DIFY_API_KEY = process.env.DIFY_API_KEY
 
 const DIFY_CHAT_MESSAGES_ENDPOINT = "/v1/chat-messages"
+const DIFY_FILES_UPLOAD_ENDPOINT = "/v1/files/upload"
+
+interface DifyFileUploadResponse {
+  id?: string
+  [key: string]: unknown
+}
+
+export interface UploadDifyBase64FileParams {
+  base64: string
+  fileName: string
+  mimeType: string
+}
 
 export async function sendDifyChatMessage(
   params: SendDifyChatMessageParams,
@@ -69,6 +88,45 @@ export async function sendDifyChatMessage(
   }
 
   return (await response.json()) as DifyChatMessageResponse
+}
+
+export async function uploadBase64FileToDify(params: UploadDifyBase64FileParams): Promise<string> {
+  const { base64, fileName, mimeType } = params
+
+  if (!base64?.trim()) {
+    throw new Error("base64 data is required to upload a file to Dify")
+  }
+
+  if (!DIFY_API_KEY) {
+    throw new Error("DIFY_API_KEY is not set. Please add it to your environment configuration.")
+  }
+
+  const buffer = Buffer.from(base64, "base64")
+  const formData = new FormData()
+  formData.append("file", new Blob([buffer], { type: mimeType || "application/octet-stream" }), fileName)
+
+  const response = await fetch(`${DIFY_API_BASE_URL}${DIFY_FILES_UPLOAD_ENDPOINT}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${DIFY_API_KEY}`,
+    },
+    body: formData,
+    cache: "no-store",
+  })
+
+  if (!response.ok) {
+    const errorBody = await safeReadResponseBody(response)
+    throw new Error(
+      `Failed to upload file to Dify: ${response.status} ${response.statusText}` + (errorBody ? ` - ${errorBody}` : ""),
+    )
+  }
+
+  const json = (await response.json()) as DifyFileUploadResponse
+  if (!json.id) {
+    throw new Error("Dify file upload response did not contain an id")
+  }
+
+  return json.id
 }
 
 async function safeReadResponseBody(response: Response): Promise<string | null> {

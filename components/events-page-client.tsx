@@ -19,6 +19,7 @@ interface EventFormSubmission {
   data: Omit<Event, "id" | "createdAt">
   imageFile: File | null
   removeImage: boolean
+  imageOnlyExtraction: boolean
 }
 
 const buildEventTimestamp = (event: Event) => {
@@ -261,15 +262,17 @@ export function EventsPageClient({ initialEvents, canManageEvents }: EventsPageC
             <p className="text-sm text-muted-foreground">開催予定のイベントを確認し、新規作成や内容の更新ができます。</p>
           </div>
         </div>
-        <Button
-          onClick={() => canManageEvents && setShowForm(true)}
-          className="flex items-center gap-2"
-          size="lg"
-          disabled={isProcessing || !canManageEvents}
-        >
-          <Plus className="h-5 w-5" />
-          {canManageEvents ? "新しいイベント" : "ログインして作成"}
-        </Button>
+        {!showForm && (
+          <Button
+            onClick={() => canManageEvents && setShowForm(true)}
+            className="flex items-center gap-2"
+            size="lg"
+            disabled={isProcessing || !canManageEvents}
+          >
+            <Plus className="h-5 w-5" />
+            {canManageEvents ? "新しいイベント" : "ログインして作成"}
+          </Button>
+        )}
       </div>
 
       {errorMessage && (

@@ -19,5 +19,12 @@ export default async function AdminEventsPage() {
 
   const events: Event[] = ((eventRows ?? []) as EventRow[]).map(mapEventRowToEvent)
 
-  return <EventsPageClient initialEvents={events} canManageEvents showAdminHint={false} />
+  return (
+    <EventsPageClient
+      initialEvents={events}
+      canManageEvents
+      showAdminHint={false}
+      enableAiImageTools
+    />
+  )
 }

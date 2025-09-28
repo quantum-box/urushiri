@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ArrowLeft, MapPin, Clock, Users, Share2, Edit, Calendar, Sparkles } from "lucide-react"
 import { format, parseISO } from "date-fns"
 import { ja } from "date-fns/locale"
 import type { Event } from "@/app/page"
@@ -174,9 +175,30 @@ export function EventDetailClient({
                 </div>
               )}
 
-              <section className="space-y-5 rounded-[12px] border border-border/70 bg-muted/30 p-5">
-                <div>
-                  <h3 className="text-base font-semibold text-foreground">共通イベント参加者</h3>
+              <section
+                className={`space-y-5 rounded-[12px] border border-border/70 p-5 transition-colors ${
+                  isAuthenticated && sharedParticipantCount > 0
+                    ? "border-[var(--success-foreground)]/40 bg-[var(--success-bg)]/80 shadow-[0_8px_18px_rgba(58,122,58,0.08)]"
+                    : "bg-muted/30"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Users
+                    className={`h-5 w-5 ${
+                      isAuthenticated && sharedParticipantCount > 0
+                        ? "text-[var(--success-foreground)]"
+                        : "text-[color:var(--secondary)]"
+                    }`}
+                  />
+                  <h3
+                    className={`text-base font-semibold ${
+                      isAuthenticated && sharedParticipantCount > 0
+                        ? "text-[var(--success-foreground)]"
+                        : "text-foreground"
+                    }`}
+                  >
+                    共通イベント参加者
+                  </h3>
                 </div>
 
                 {!isAuthenticated ? (
@@ -190,9 +212,19 @@ export function EventDetailClient({
                       : "このイベントに申し込むと、共通の参加履歴があるユーザーが表示されます。"}
                   </p>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    共通の参加履歴があるユーザーが {sharedParticipantCount} 名見つかりました。
-                  </p>
+                  <Alert
+                    variant="success"
+                    className="border border-[var(--success-foreground)]/30 bg-white/90 text-[var(--success-foreground)] shadow-sm"
+                  >
+                    <Sparkles className="size-6" />
+                    <AlertTitle className="text-sm font-semibold tracking-wide">
+                      共通の参加履歴が見つかりました
+                    </AlertTitle>
+                    <AlertDescription className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold leading-none">{sharedParticipantCount}</span>
+                      <span className="text-sm font-medium">名のユーザーがあなたと同じイベントに参加しています。</span>
+                    </AlertDescription>
+                  </Alert>
                 )}
               </section>
 

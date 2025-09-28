@@ -270,15 +270,24 @@ export function EventsPageClient({ initialEvents, canManageEvents, showAdminHint
         </div>
 
         {!showForm && (
-          <Button
-            onClick={() => canManageEvents && setShowForm(true)}
-            className="flex items-center gap-2"
-            size="lg"
-            disabled={isProcessing || !canManageEvents}
-          >
-            <Plus className="h-5 w-5" />
-            {canManageEvents ? "新しいイベント" : "ログインして作成"}
-          </Button>
+          canManageEvents ? (
+            <Button
+              onClick={() => setShowForm(true)}
+              className="flex items-center gap-2"
+              size="lg"
+              disabled={isProcessing}
+            >
+              <Plus className="h-5 w-5" />
+              イベントを作成
+            </Button>
+          ) : (
+            <Button asChild className="flex items-center gap-2" size="lg">
+              <Link href="/signin">
+                <Plus className="h-5 w-5" />
+                ログインして作成
+              </Link>
+            </Button>
+          )
         )}
       </div>
 

@@ -61,7 +61,7 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false, canM
                 />
               </div>
             )}
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex-1 space-y-3">
                 <Badge variant="secondary" className="w-fit">
                   {event.category}
@@ -70,7 +70,7 @@ export function EventList({ events, onEdit, onDelete, isProcessing = false, canM
                   {event.title}
                 </CardTitle>
               </div>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1 sm:justify-end">
                 <Button
                   variant="ghost"
                   size="sm"

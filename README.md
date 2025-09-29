@@ -1,30 +1,25 @@
-# イベント共有ページUI
+# ゆるしり
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+ゆるしりは、イベント情報をゆるく共有し合うための Next.js 製アプリケーションです。Vercel 上でホスティングしており、Supabase をバックエンドに利用しています。八戸市令和７年度 いきいきとしたデジタル社会推進事業 ハッカソンから生まれたプロダクトで、イベントの詳細は [https://8nohe-ikiikidx.jp/ideahack/](https://8nohe-ikiikidx.jp/ideahack/) を参照してください。制作に関わった参加者全員を著作者として扱います。
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/quantumbox/v0-ui)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/XBUUue51MUx)
+## デプロイ
 
-## Overview
+- 本番環境: [https://yurusiri.vercel.app/](https://yurusiri.vercel.app/)
+- v0.app プロジェクト: [https://v0.app/chat/projects/XBUUue51MUx](https://v0.app/chat/projects/XBUUue51MUx)
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+## セットアップ
 
-## Deployment
+1. `mise install`
+2. `mise run install`
+3. `.env.local` に Supabase 関連の環境変数を設定
 
-Your project is live at:
+## 主なコマンド
 
-**[https://vercel.com/quantumbox/v0-ui](https://vercel.com/quantumbox/v0-ui)**
+- `mise run dev`: 開発サーバーを起動
+- `mise run build`: 本番ビルドを生成
+- `mise run start`: 本番ビルドをローカルで確認
+- `mise run lint`: Lint チェックを実行
 
-## Build your app
+## ライセンス
 
-Continue building your app on:
-
-**[https://v0.app/chat/projects/XBUUue51MUx](https://v0.app/chat/projects/XBUUue51MUx)**
-
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+このリポジトリは MIT License のもとで公開されています。詳細は `LICENSE` を参照してください。

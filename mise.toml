@@ -2,18 +2,3 @@
 node = "24"
 "npm:@openai/codex" = "latest"
 pnpm = "latest"
-
-[tasks.install]
-run = "pnpm install"
-
-[tasks.dev]
-run = "pnpm dev"
-
-[tasks.build]
-run = "pnpm build"
-
-[tasks.start]
-run = "pnpm start"
-
-[tasks.lint]
-run = "pnpm lint"

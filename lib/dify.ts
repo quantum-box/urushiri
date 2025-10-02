@@ -20,6 +20,7 @@ export interface SendDifyChatMessageParams {
   user?: string
   files?: DifyFilePayload[]
   responseMode?: "blocking" | "streaming"
+  timeoutMs?: number
 }
 
 export interface DifyChatMessageResponse {
@@ -46,7 +47,7 @@ export interface UploadDifyBase64FileParams {
 export async function sendDifyChatMessage(
   params: SendDifyChatMessageParams,
 ): Promise<DifyChatMessageResponse> {
-  const { query, inputs, conversationId, user, files, responseMode } = params
+  const { query, inputs, conversationId, user, files, responseMode, timeoutMs } = params
 
   if (!query?.trim()) {
     throw new Error("query is required to send a Dify chat message")
@@ -68,6 +69,12 @@ export async function sendDifyChatMessage(
     bodyPayload.conversation_id = conversationId
   }
 
+  const controller = new AbortController()
+  const timeoutDuration = typeof timeoutMs === "number" && timeoutMs > 0 ? timeoutMs : 60_000
+  const timeout = setTimeout(() => {
+    controller.abort()
+  }, timeoutDuration)
+
   const response = await fetch(`${DIFY_API_BASE_URL}${DIFY_CHAT_MESSAGES_ENDPOINT}`, {
     method: "POST",
     headers: {
@@ -77,7 +84,9 @@ export async function sendDifyChatMessage(
     body: JSON.stringify(bodyPayload),
     // Explicitly opt out of caching to prevent stale AI responses
     cache: "no-store",
+    signal: controller.signal,
   })
+  clearTimeout(timeout)
 
   if (!response.ok) {
     const errorBody = await safeReadResponseBody(response)

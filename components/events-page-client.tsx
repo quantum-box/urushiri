@@ -2,27 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { EventList } from "@/components/event-list"
-import { EventForm } from "@/components/event-form"
-import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Plus, Calendar } from "lucide-react"
+import { Calendar } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { EVENT_SELECT_COLUMNS, mapEventRowToEvent, type EventRow } from "@/lib/supabase/events"
 import type { Event } from "@/app/page"
-import Link from "next/link"
 
 interface EventsPageClientProps {
   initialEvents: Event[]
   canManageEvents: boolean
   showAdminHint?: boolean
   enableAiImageTools?: boolean
-}
-
-interface EventFormSubmission {
-  data: Omit<Event, "id" | "createdAt">
-  imageFile: File | null
-  removeImage: boolean
-  imageOnlyExtraction: boolean
 }
 
 const buildEventTimestamp = (event: Event) => {
@@ -59,77 +49,8 @@ export function EventsPageClient({
 }: EventsPageClientProps) {
   const supabase = useMemo(() => createClient(), [])
   const [events, setEvents] = useState<Event[]>(() => sortEventsByStartDesc(initialEvents))
-  const [showForm, setShowForm] = useState(false)
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!canManageEvents) {
-      setShowForm(false)
-      setEditingEvent(null)
-    }
-  }, [canManageEvents])
-
-  const handleCreateEvent = async ({ data: eventData, imageFile }: EventFormSubmission) => {
-    if (!canManageEvents) {
-      return
-    }
-
-    setIsProcessing(true)
-    setErrorMessage(null)
-
-    let imageUrlToSave = eventData.imageUrl?.trim() ?? ""
-
-    if (imageFile) {
-      const extension = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpg"
-      const filePath = `events/${crypto.randomUUID()}.${extension}`
-      const uploadResult = await supabase.storage
-        .from("event-images")
-        .upload(filePath, imageFile, {
-          cacheControl: "3600",
-          upsert: true,
-        })
-
-      if (uploadResult.error) {
-        console.error(uploadResult.error)
-        setErrorMessage("画像のアップロードに失敗しました。時間を置いて再度お試しください。")
-        setIsProcessing(false)
-        return
-      }
-
-      const { data: publicUrlData } = supabase.storage.from("event-images").getPublicUrl(filePath)
-      imageUrlToSave = publicUrlData.publicUrl
-    }
-
-    const insertResult = await supabase
-      .from("events")
-      .insert({
-        title: eventData.title,
-        description: eventData.description,
-        date: eventData.date,
-        time: eventData.time,
-        location: eventData.location,
-        category: eventData.category,
-        max_attendees: eventData.maxAttendees,
-        current_attendees: 0,
-        is_public: eventData.isPublic,
-        image_url: imageUrlToSave ? imageUrlToSave : null,
-      })
-      .select(EVENT_SELECT_COLUMNS)
-      .single()
-
-    if (insertResult.error) {
-      console.error(insertResult.error)
-      setErrorMessage("イベントの作成に失敗しました。入力内容を確認して再度お試しください。")
-    } else if (insertResult.data) {
-      const createdEvent = mapEventRowToEvent(insertResult.data as EventRow)
-      setEvents((prev) => sortEventsByStartDesc([...prev, createdEvent]))
-      setShowForm(false)
-    }
-
-    setIsProcessing(false)
-  }
 
   const getImagePathFromUrl = (url: string) => {
     const marker = "/event-images/"
@@ -138,81 +59,6 @@ export function EventsPageClient({
       return null
     }
     return url.slice(index + marker.length)
-  }
-
-  const handleUpdateEvent = async ({ data: eventData, imageFile, removeImage }: EventFormSubmission) => {
-    if (!canManageEvents || !editingEvent) {
-      return
-    }
-
-    setIsProcessing(true)
-    setErrorMessage(null)
-
-    const previousImageUrl = editingEvent.imageUrl ?? ""
-    let imageUrlToSave = removeImage ? "" : eventData.imageUrl?.trim() ?? previousImageUrl
-
-    if (imageFile) {
-      const extension = imageFile.name.split(".").pop()?.toLowerCase() ?? "jpg"
-      const filePath = `events/${editingEvent.id}-${Date.now()}.${extension}`
-      const uploadResult = await supabase.storage
-        .from("event-images")
-        .upload(filePath, imageFile, {
-          cacheControl: "3600",
-          upsert: true,
-        })
-
-      if (uploadResult.error) {
-        console.error(uploadResult.error)
-        setErrorMessage("画像のアップロードに失敗しました。時間を置いて再度お試しください。")
-        setIsProcessing(false)
-        return
-      }
-
-      const { data: publicUrlData } = supabase.storage.from("event-images").getPublicUrl(filePath)
-      imageUrlToSave = publicUrlData.publicUrl
-    }
-
-    const updateResult = await supabase
-      .from("events")
-      .update({
-        title: eventData.title,
-        description: eventData.description,
-        date: eventData.date,
-        time: eventData.time,
-        location: eventData.location,
-        category: eventData.category,
-        max_attendees: eventData.maxAttendees,
-        current_attendees: eventData.currentAttendees,
-        is_public: eventData.isPublic,
-        image_url: imageUrlToSave ? imageUrlToSave : null,
-      })
-      .eq("id", editingEvent.id)
-      .select(EVENT_SELECT_COLUMNS)
-      .single()
-
-    if (updateResult.error) {
-      console.error(updateResult.error)
-      setErrorMessage("イベントの更新に失敗しました。時間を置いて再度お試しください。")
-    } else if (updateResult.data) {
-      if ((imageFile || removeImage) && previousImageUrl && previousImageUrl !== imageUrlToSave) {
-        const previousPath = getImagePathFromUrl(previousImageUrl)
-        if (previousPath) {
-          const { error: removeError } = await supabase.storage.from("event-images").remove([previousPath])
-          if (removeError) {
-            console.error(removeError)
-          }
-        }
-      }
-
-      const updatedEvent = mapEventRowToEvent(updateResult.data as EventRow)
-      setEvents((prev) =>
-        sortEventsByStartDesc(prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))),
-      )
-      setEditingEvent(null)
-      setShowForm(false)
-    }
-
-    setIsProcessing(false)
   }
 
   const handleDeleteEvent = async (id: string) => {
@@ -235,27 +81,9 @@ export function EventsPageClient({
       setErrorMessage("イベントの削除に失敗しました。")
     } else {
       setEvents((prev) => prev.filter((event) => event.id !== id))
-      if (editingEvent?.id === id) {
-        setEditingEvent(null)
-        setShowForm(false)
-      }
     }
 
     setIsProcessing(false)
-  }
-
-  const handleEditEvent = (event: Event) => {
-    if (!canManageEvents) {
-      return
-    }
-
-    setEditingEvent(event)
-    setShowForm(true)
-  }
-
-  const handleCancelForm = () => {
-    setShowForm(false)
-    setEditingEvent(null)
   }
 
   return (
@@ -269,32 +97,11 @@ export function EventsPageClient({
             <h2 className="text-2xl font-semibold leading-tight text-foreground sm:text-[32px]">イベント一覧</h2>
             <p className="text-sm text-muted-foreground">
               {canManageEvents
-                ? "開催予定のイベントを確認し、新規作成や内容の更新ができます。"
+                ? "開催予定のイベントを確認し、内容の更新や削除ができます。"
                 : "開催予定のイベントを確認できます。"}
             </p>
           </div>
         </div>
-
-        {!showForm && (
-          canManageEvents ? (
-            <Button
-              onClick={() => setShowForm(true)}
-              className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start"
-              size="lg"
-              disabled={isProcessing}
-            >
-              <Plus className="h-5 w-5" />
-              イベントを作成
-            </Button>
-          ) : (
-            <Button asChild className="flex w-full items-center justify-center gap-2 sm:w-auto" size="lg">
-              <Link href="/signin">
-                <Plus className="h-5 w-5" />
-                ログインして作成
-              </Link>
-            </Button>
-          )
-        )}
       </div>
 
       {errorMessage && (
@@ -305,23 +112,12 @@ export function EventsPageClient({
 
       {!canManageEvents && showAdminHint && null}
 
-      {showForm && canManageEvents ? (
-        <EventForm
-          event={editingEvent}
-          onSubmit={editingEvent ? handleUpdateEvent : handleCreateEvent}
-          isSubmitting={isProcessing}
-          onCancel={handleCancelForm}
-          enableAiImageTools={enableAiImageTools}
-        />
-      ) : (
-        <EventList
-          events={events}
-          onEdit={canManageEvents ? handleEditEvent : undefined}
-          onDelete={canManageEvents ? handleDeleteEvent : undefined}
-          isProcessing={isProcessing}
-          canManageEvents={canManageEvents}
-        />
-      )}
+      <EventList
+        events={events}
+        onDelete={canManageEvents ? handleDeleteEvent : undefined}
+        isProcessing={isProcessing}
+        canManageEvents={canManageEvents}
+      />
     </div>
   )
 }

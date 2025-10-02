@@ -1,0 +1,6 @@
+- 環境構築: `mise install`でツールを準備し、`mise run install`で依存関係をインストール。
+- 開発: `mise run dev`でローカル開発サーバー。
+- ビルド: `mise run build`で本番ビルド生成。
+- 本番確認: `mise run start`。
+- Lint: `mise run lint`。
+- Supabaseリセット: `pnpm dlx supabase db reset --linked --seed`。

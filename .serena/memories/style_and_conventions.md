@@ -1,0 +1,5 @@
+- TypeScript・Next.js App Router、2スペースインデント。
+- ファイル名はデフォルトエクスポート名に合わせる慣習。
+- コンポーネント・hooksはPascalCase、ヘルパーはcamelCase。
+- Tailwindと`cn`ユーティリティでスタイルを構成。
+- サーバーコンポーネント優先、クライアント専用は`*-client.tsx`。

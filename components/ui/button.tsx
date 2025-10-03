@@ -16,6 +16,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-[#95c9de]",
         ghost: "text-foreground hover:bg-[color:var(--info-bg)] hover:text-[color:var(--info-foreground)]",
         link: "text-primary underline-offset-4 hover:underline",
+        ai: "relative overflow-hidden border border-primary/30 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 text-white shadow-[0_12px_32px_-12px_rgba(124,58,237,0.65)] transition-[transform,box-shadow] before:absolute before:inset-0 before:-z-10 before:bg-[linear-gradient(120deg,rgba(255,255,255,0.35)_0%,rgba(255,255,255,0)_45%,rgba(255,255,255,0.35)_100%)] before:pointer-events-none before:opacity-0 before:transition-opacity hover:translate-y-[-1px] hover:shadow-[0_16px_36px_-12px_rgba(14,165,233,0.6)] hover:before:opacity-100 active:translate-y-0",
       },
       size: {
         default: "h-11 px-6 py-3 has-[>svg]:px-5",

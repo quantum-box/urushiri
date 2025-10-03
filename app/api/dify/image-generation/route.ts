@@ -62,7 +62,7 @@ const extractImageResult = (response: DifyChatMessageResponse): ExtractedImageRe
   const dataField = (response as Record<string, unknown>).data
   if (dataField && typeof dataField === "object") {
     const dataRecord = dataField as Record<string, unknown>
-    const directUrl = sanitizeDifyUrl(dataRecord.image_url)
+    const directUrl = sanitizeDifyUrl(typeof dataRecord.image_url === "string" ? dataRecord.image_url : null)
     if (directUrl) {
       return { imageUrl: directUrl }
     }
@@ -79,7 +79,11 @@ const extractImageResult = (response: DifyChatMessageResponse): ExtractedImageRe
         if (isString(imageBase64)) {
           return { imageBase64 }
         }
-        const imageUrl = sanitizeDifyUrl((output as Record<string, unknown>).image_url)
+        const imageUrl = sanitizeDifyUrl(
+          typeof (output as Record<string, unknown>).image_url === "string"
+            ? ((output as Record<string, string>).image_url as string)
+            : null,
+        )
         if (imageUrl) {
           return { imageUrl }
         }
@@ -124,11 +128,13 @@ const extractImageResult = (response: DifyChatMessageResponse): ExtractedImageRe
           const data = (item as Record<string, unknown>).data
           if (data && typeof data === "object") {
             const dataRecord = data as Record<string, unknown>
-            const embeddedUrl = sanitizeDifyUrl(dataRecord.url)
+            const embeddedUrl = sanitizeDifyUrl(typeof dataRecord.url === "string" ? dataRecord.url : null)
             if (embeddedUrl) {
               return { imageUrl: embeddedUrl }
             }
-            const embeddedImageUrl = sanitizeDifyUrl(dataRecord.image_url)
+            const embeddedImageUrl = sanitizeDifyUrl(
+              typeof dataRecord.image_url === "string" ? dataRecord.image_url : null,
+            )
             if (embeddedImageUrl) {
               return { imageUrl: embeddedImageUrl }
             }

@@ -78,8 +78,12 @@ function formatDistribution<T extends string>(
   limit = 3,
 ) {
   const entries = Object.entries(counts as Record<T, number>)
-    .filter(([, count]) => count > 0)
-    .sort((a, b) => b[1] - a[1])
+    .filter(([, count]) => typeof count === "number" && count > 0)
+    .sort((a, b) => {
+      const aValue = typeof a[1] === "number" ? a[1] : 0
+      const bValue = typeof b[1] === "number" ? b[1] : 0
+      return bValue - aValue
+    })
     .slice(0, limit)
 
   if (!entries.length) {

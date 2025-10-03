@@ -7,6 +7,7 @@ interface ChatRequestBody {
   conversationId?: unknown
   user?: unknown
   files?: unknown
+  timeoutMs?: unknown
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -60,6 +61,7 @@ export async function POST(request: Request) {
       user: typeof body.user === "string" ? body.user : undefined,
       files: normalizeFiles(body.files),
       responseMode: "blocking",
+      timeoutMs: typeof body.timeoutMs === "number" ? body.timeoutMs : undefined,
     })
 
     return NextResponse.json(difyResponse)

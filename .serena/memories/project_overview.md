@@ -1,0 +1,4 @@
+- Next.js 14 App Routerプロジェクトで、イベント情報を共有する「ゆるしり」アプリ。
+- フロントはNext.js/Tailwind、バックエンドはSupabase。Vercelでホスティング。
+- Dify連携のAPIエンドポイントが`app/api/dify/`にあり、AI生成機能を提供。
+- データベースのスキーマ・シードは`supabase/`配下に配置。

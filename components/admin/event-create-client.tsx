@@ -109,4 +109,3 @@ export function EventCreateClient({ enableAiImageTools = false }: EventCreateCli
     </div>
   )
 }
-

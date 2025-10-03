@@ -62,10 +62,10 @@
 
 ### フォントファミリー
 
-```css
+\`\`\`css
 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", 
              "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-```
+\`\`\`
 
 ### フォントサイズ
 
@@ -106,37 +106,37 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
 ### ボタン
 
 #### プライマリボタン
-```css
+\`\`\`css
 background-color: #F4A8B9;
 color: #FFFFFF;
 padding: 12px 24px;
 border-radius: 8px;
 font-weight: 500;
 transition: all 0.2s ease;
-```
+\`\`\`
 
 #### セカンダリボタン
-```css
+\`\`\`css
 background-color: transparent;
 color: #F4A8B9;
 border: 1px solid #F4A8B9;
 padding: 12px 24px;
 border-radius: 8px;
-```
+\`\`\`
 
 ### カード
 
-```css
+\`\`\`css
 background: #FFFFFF;
 border: 1px solid #E8E8E8;
 border-radius: 12px;
 padding: 24px;
 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-```
+\`\`\`
 
 ### 入力フィールド
 
-```css
+\`\`\`css
 background: #FFFFFF;
 border: 1px solid #E8E8E8;
 border-radius: 6px;
@@ -147,7 +147,7 @@ transition: border-color 0.2s ease;
 /* フォーカス時 */
 border-color: #F4A8B9;
 outline: none;
-```
+\`\`\`
 
 ---
 
@@ -184,7 +184,7 @@ outline: none;
 
 ### イベントカード
 
-```html
+\`\`\`html
 <div class="event-card">
   <div class="event-header">
     <h3>もくもく会 #12</h3>
@@ -203,11 +203,11 @@ outline: none;
   </div>
   <button class="btn-primary">参加する</button>
 </div>
-```
+\`\`\`
 
 ### スタイル定義
 
-```css
+\`\`\`css
 .event-card {
   background: #FFFFFF;
   border: 1px solid #E8E8E8;
@@ -258,7 +258,7 @@ outline: none;
   background: #F091A6;
   box-shadow: 0 4px 12px rgba(244, 168, 185, 0.3);
 }
-```
+\`\`\`
 
 ---
 
@@ -271,12 +271,12 @@ outline: none;
 
 ### フォーカス表示
 
-```css
+\`\`\`css
 :focus {
   outline: 2px solid #F4A8B9;
   outline-offset: 2px;
 }
-```
+\`\`\`
 
 ---
 
